@@ -28,6 +28,8 @@ namespace Metanet.Server
             CreateMap<UserRolesDTO, UserRole>().ReverseMap();
             CreateMap<UserUpdateDTO, ApplicationUser>().ReverseMap();
             CreateMap<TransactionCreateDTO, Transaction>().ReverseMap();
+            CreateMap<SubscriptionCreateDTO, Subscription>().ReverseMap();
+            CreateMap<SubscriptionUpdateDTO, Subscription>().ReverseMap();
             CreateMap(typeof(PaginationDTO<>), typeof(PageResult<>)).ReverseMap();
             
            

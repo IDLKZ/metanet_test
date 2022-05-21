@@ -81,6 +81,7 @@ builder.Services.AddScoped<IMaterialService, MaterialService>();
 builder.Services.AddScoped<ITeamService, TeamService>();
 builder.Services.AddScoped<IHomeService, HomeService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
 
 //http and jwt
 builder.Services.AddHttpClient();

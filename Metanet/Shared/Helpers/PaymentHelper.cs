@@ -92,6 +92,19 @@ public class PaymentHelper
         return text;
     }
 
+    public static string GetStringForTransaction(string DateTo, string DateFrom)
+    {
+        string text = PaymentHelper.SecredShared + DateFrom + ";" + DateTo + ";" + PaymentHelper.TID + ";" +
+                      PaymentHelper.MID;
+        return text;
+    }
+    
+    public static string GetStringForSingleTransaction(string ORDER)
+    {
+        string text = PaymentHelper.SecredShared + ORDER + ";" + PaymentHelper.MID;
+        return text;
+    }
+
     public static PaymentDTO GetPaymentDto(Course course, List<int> Orders,ApplicationUser user)
     {
         if (course != null)
