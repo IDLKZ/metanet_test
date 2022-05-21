@@ -1,0 +1,135 @@
+﻿@page "/admin/course-edit/{Alias}"
+@inject IFileUploader fileUploader
+@inject NavigationManager NavigationManager
+@inject ICourseService CourseService
+<!-- Card body START -->
+	@if(Course != null){
+	<div class="card-body">
+					<!-- Step content START -->
+					<div class="bs-stepper-content">
+						
+
+							<!-- Step 1 content START -->
+							<div id="step-1" role="tabpanel" class="content show" aria-labelledby="steppertrigger1">
+								<!-- Title -->
+								<h4>Детали курса</h4>
+
+								<hr> <!-- Divider -->
+								<EditForm Model="Course" OnValidSubmit="UpdateCourse">
+									<DataAnnotationsValidator></DataAnnotationsValidator>
+								
+								<!-- Basic information START -->
+								<div class="row g-4">
+									<!-- Course title -->
+									<div class="col-12">
+										<label class="form-label">Наименование курса</label>
+										<InputText class="form-control" @bind-Value="Course.Title"></InputText>
+										<ValidationMessage For="()=>Course.Title"></ValidationMessage>
+									</div>
+									<div class="col-12">
+										<label class="form-label">Стоимость курса KZT</label>
+										<InputNumber class="form-control"  min="100" max="100000000" @bind-Value="Course.Price"></InputNumber>
+										<ValidationMessage For="()=>Course.Price"></ValidationMessage>
+									</div>
+									<div class="col-12">
+										<label class="form-label">Описание курса </label>
+										<InputTextArea class="form-control"  @bind-Value="Course.Description"></InputTextArea>
+										<ValidationMessage For="()=>Course.Description"></ValidationMessage>
+									</div>
+									<div class="col-6">
+										<label class="form-label">Дата начала</label>
+										<InputDate class="form-control"   @bind-Value="Course.DateStart"></InputDate>
+										<ValidationMessage For="()=>Course.DateStart"></ValidationMessage>
+									</div>
+									<div class="col-6">
+										<label class="form-label">Дата конца</label>
+										<InputDate class="form-control"   @bind-Value="Course.DateEnd"></InputDate>
+										<ValidationMessage For="()=>Course.DateEnd"></ValidationMessage>
+									</div>
+									<div class="col-12">
+										@if(loading){
+											<Loading></Loading>
+										}
+									@if(!string.IsNullOrEmpty(Course.ImageUrl)){
+											<div class="card" style="width: 18rem;">
+											  <img class="card-img-top" src="@Course.ImageUrl" alt="Card image cap">
+											  <div class="card-body text-center">		
+												<button class="btn btn-danger" @onclick="DeleteFile">Удалить</button>
+											  </div>
+											</div>
+											}
+											
+										<label class="form-label">Изображение</label>
+										<InputFile class="form-control" OnChange="UploadFile"></InputFile>
+										<ValidationMessage For="()=>Course.ImageUrl"></ValidationMessage>
+									</div>
+
+
+									<!-- Step 1 button -->
+									<div class="d-flex justify-content-end mt-3">
+										<button class="btn btn-primary next-btn mb-0">Сохранить</button>
+									</div>
+								</div>
+								</EditForm>
+								<!-- Basic information START -->
+							</div>
+							<!-- Step 1 content END -->
+					</div>
+				</div>
+	<!-- Card body END -->
+}
+else
+{
+	<Loader loader=true></Loader>
+}
+
+
+@code {
+	CourseDTO Course;
+	public int Id = 0;
+	bool loading = false;
+	[Parameter]
+	public string Alias { get; set; }
+
+	protected async override Task OnInitializedAsync()
+	{
+		Course = await CourseService.GetCourseByAlias(Alias);
+
+		if(Course == null){
+
+			NavigationManager.NavigateTo("/admin/courses");
+		}
+		else{
+			Id = Course.Id;
+		}
+	}
+
+
+	public async Task UploadFile(InputFileChangeEventArgs e)
+	{
+		loading = true;
+		string[] resolved_format = {".jpg", ".jpeg", ".png", ".bmp", ".gif"};
+
+		Course.ImageUrl = await fileUploader.DeleteFile(Course.ImageUrl);
+		Course.ImageUrl = await fileUploader.UploadOneFile(e,resolved_format,10);
+		loading = false;
+		StateHasChanged();
+
+
+	}
+	public async Task DeleteFile()
+	{
+		Course.ImageUrl = await fileUploader.DeleteFile(Course.ImageUrl);
+		StateHasChanged();
+	}
+
+	public async Task UpdateCourse()
+	{
+		var result = await CourseService.UpdateCourse(Id, Course);
+		if (result)
+		{
+			NavigationManager.NavigateTo("/admin/courses");
+		}
+	}
+
+}

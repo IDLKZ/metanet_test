@@ -1,0 +1,31 @@
+﻿<CascadingAuthenticationState>
+<Router AppAssembly="@typeof(App).Assembly">
+    <Found Context="routeData">
+        <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" >
+            <NotAuthorized>
+                <p>Not Have permission to see this page</p>
+            </NotAuthorized>
+            </AuthorizeRouteView>
+        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+    </Found>
+    <NotFound>
+        <PageTitle>Not found</PageTitle>
+        <LayoutView Layout="@typeof(MainLayout)">
+            <div class ="container mh-100 pt-120">
+                <div class ="row">
+                    <div class="col-md-12 d-flex justify-content-center align-items-center" style="min-height:100vh">
+                        <div class="w-100 py-5 px-5 text-center">
+                            <img src="materials//images/404.gif" width="100%"/>
+                            <h1 class="text-danger">Запрашивая страница не найдена!</h1>
+                            <a class="btn btn-info my-4" href="/">Главная</a>
+                        </div>
+                        
+                    </div>
+
+                </div>
+               
+            </div>
+        </LayoutView>
+    </NotFound>
+</Router>
+</CascadingAuthenticationState>

@@ -1,0 +1,116 @@
+﻿@page "/register";
+@inject IAuthenticationService authService;
+@inject NavigationManager navigation;
+@inject Sotsera.Blazor.Toaster.IToaster Toaster
+
+<div class = "container-fluid default-bg pt-120">
+    <div class = "row d-flex justify-content-center align-items-center min-vh-100">
+        <div class = "col-md-6">
+           
+            <div class = "card text-center py-4">
+                <h2>Регистрация</h2>
+                @if(Errors != null)
+                {
+                    <div class= "aler alert-danger">
+                        @foreach(var item in Errors)
+                        {
+                            <p>@item</p>
+                        }
+                    </div>
+                }
+                
+                
+
+
+                <div class = "card-body">
+            <EditForm Model="model" OnValidSubmit = "SignIn">
+            <DataAnnotationsValidator />
+            <ValidationSummary></ValidationSummary>
+    
+           <div class="form-group my-2">
+            <label for="exampleInputEmail1">Ваше Логин *</label> 
+              <InputText @bind-Value="model.UserName" class="form-control" placeholder="Ваш логин" />
+              <ValidationMessage For="(()=>model.UserName)" />
+          </div>
+          <div class="form-group my-2">
+            <label for="exampleInputEmail1">Ваше Имя *</label> 
+              <InputText @bind-Value="model.Name" class="form-control" placeholder="Ваше имя" />
+              <ValidationMessage For="(()=>model.Name)" />
+          </div>
+          <div class="form-group my-2">
+                <label for="exampleInputEmail1">Email *</label> 
+                  <InputText type="email" @bind-Value="model.Email" class="form-control" placeholder="Email..." />
+                  <ValidationMessage For="(()=>model.Email)" />
+           </div>
+
+           <div class="form-group my-2">
+                <label for="exampleInputEmail1">Номер телефона *</label> 
+                  <InputText @bind-Value="model.PhoneNo" class="form-control" placeholder="+77" />
+                  <ValidationMessage For="(()=>model.PhoneNo)" />
+           </div>
+
+           <div class="form-group my-2">
+                <label for="exampleInputEmail1">Пароль *</label> 
+                  <InputText @bind-Value="model.Password" class="form-control" type="password" />
+                  <ValidationMessage For="(()=>model.Password)" />
+           </div>
+
+           <div class="form-group my-2">
+                <label for="exampleInputEmail1">Повторите пароль *</label> 
+                  <InputText @bind-Value="model.ConfirmPassword" class="form-control" type="password" />
+                  <ValidationMessage For="(()=>model.ConfirmPassword)" />
+           </div>
+             <div class = "text-center">
+                        @if (process)
+                        {
+                            <Loading></Loading>
+                        }
+                        else
+                        {
+                             <button type ="submit" class = "btn btn-info text-white">Зарегистрировать</button>
+                        }
+                      
+                </div>
+                </EditForm>
+                </div>
+                <div class="card-text">
+                    <NavLink href="/login">Вход</NavLink>
+                </div>
+             </div>
+             
+        </div>
+    </div>
+
+
+</div>
+
+
+
+@code {
+    RegisterDTO model = new RegisterDTO();
+    public bool process = false;
+    public IEnumerable<string>? Errors = null;
+    public string Message = "";
+    
+    public async Task SignIn()
+    {
+        process = true;
+        CommonResponse commonResponse = await authService.SignUp(model);
+        process = false;
+        bool result = commonResponse.Success;
+
+        if(result == true)
+        {
+            Toaster.Success("Аккаунт успешно создан!");
+            navigation.NavigateTo("/login");
+        }
+        else
+        {
+            Toaster.Error(commonResponse.Message ?? "Упс.... Что-то пошло не так");
+            Errors = commonResponse.ErrorMessages;
+        }
+
+
+    }
+
+}

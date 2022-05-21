@@ -1,0 +1,361 @@
+﻿@page "/"
+@inject IHomeService HomeService
+@inject IJSRuntime JS
+
+<section class="default-bg pt-120">
+<section>
+    <div class = "container-fluid banner" style="background-image:linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8)), url('materials/images/bg.gif')">
+    <div class = "row text-center">
+        
+        <div class="col-md-12 text-center">
+      <h1 class="banner-text">Мы, ключ к твоему будущему!</h1>
+
+      <p class="banner-subtext">успей купить со скидкой:</p>
+      
+       @if (!String.IsNullOrEmpty(CourseDate))
+    {
+           <Countdown DateString="@CourseDate"></Countdown>
+    }
+
+      <div class="d-md-flex justify-content-center">
+        <a class="btn button-blue mx-md-2">
+            купить со скидкой
+        </a>
+        <a class="btn transparent-button-blue  mx-md-2">
+           Ознакомиться
+        </a>
+      </div>
+      </div>
+    </div>
+</div>
+</section>
+   
+ 
+<section>
+<div class="container my-4 pt-4">
+    <div class = "row py-4">
+        <div class = "col-md-12 text-center">
+            <h2 class="text-uppercase text-white ">наша цель</h2>
+        </div>
+
+    </div>
+    <div class = "row my-2">
+         <div class = "col-md-6 d-flex justify-content-center justify-content-md-end">
+            <img src="materials/images/mission.png" width="320px" />    
+         </div>
+         <div class = "col-md-5 text-white lh-2 my-2 text-justify"> 
+                Мы живем во время необычайно быстрого прогресса. Мир меняется каждый день, мы просто не можем не принимать участие в этом и хотим делится этими знаниями с вами. Мы уверены что среди вас будут достойные ребята, которые через некоторое время будут делать вещи лучше нас, быстрее нас. И которые передадут знания еще дальше. Возможно именно ты получив старт от нас, сделаешь прорыв века в Криптомире.Кто владеет информацией тот владеет миром
+         </div>
+
+
+
+    </div>
+
+
+</div>
+</section>
+
+    @if(Course != null)
+    {
+            <section>
+            <div class="container my-4 pt-4">
+                <div class = "row py-4">
+                    <div class = "col-md-12 text-center ">
+                        <h2 class="text-uppercase text-white">@Course.Title</h2>
+                    </div>
+
+                </div>
+                <div class = "row my-2 d-flex justify-content-center text-center">
+                     <div class = "col-md-8">
+
+                         <img src="@Course.ImageUrl" width="100%" />
+                         <NavLink href="@($"/courses/{Course.Alias}")" class="btn button-white py-2 mt-4">
+                                записаться на курс
+                         </NavLink>
+                     </div>
+                </div>
+            </div>
+            </section>
+    }
+
+
+
+<section>
+   
+<div class="container my-4 pt-4 position-relative">
+    <FirstSvg></FirstSvg>
+
+    <div class = "row py-4">
+        <div class = "col-md-12 text-center">
+            <h2 class="text-uppercase text-white ">Пройдя курс вы узнаете</h2>
+        </div>
+
+    </div>
+    <div class="row mb-4">
+        <div class = "col-md-4">
+                <div class="list-card d-flex my-2">
+                    <div class="list-icon">
+                        <img src="materials/images/icon1.png" width="100%" />
+                    </div>
+                    <div class="list-title py-2">
+                        хранение криптовалюты
+                    </div>
+                </div>
+                <div class="list-card d-flex my-2">
+                    <div class="list-icon">
+                        <img src="materials/images/icon2.png" width="100%" />
+                    </div>
+                    <div class="list-title py-2">
+                        пополнение счета и  вывод прибыли
+                    </div>
+                </div>
+                <div class="list-card d-flex my-2">
+                    <div class="list-icon">
+                        <img src="materials/images/icon3.png" width="100%" />
+                    </div>
+                    <div class="list-title py-2">
+                        строение собственной стратегии
+                    </div>
+                </div>
+                <div class="list-card d-flex my-2">
+                    <div class="list-icon">
+                        <img src="materials/images/icon4.png" width="100%" />
+                    </div>
+                    <div class="list-title py-2">
+                        психология поведения цен
+                    </div>
+                </div>
+
+        </div>
+
+        <div class = "col-md-4">
+            <div class="list-card d-flex my-2">
+                    <div class="list-icon">
+                        <img src="materials/images/icon5.png" width="100%" />
+                    </div>
+                    <div class="list-title py-2">
+                       выбор биржи и регистрация
+                    </div>
+                </div>
+                <div class="list-card d-flex my-2">
+                    <div class="list-icon">
+                        <img src="materials/images/icon3.png" width="100%" />
+                    </div>
+                    <div class="list-title py-2">
+                       рассчет рисков в торговле
+                    </div>
+                </div>
+                <div class="list-card d-flex my-2">
+                    <div class="list-icon">
+                        <img src="materials/images/icon6.png" width="100%" />
+                    </div>
+                    <div class="list-title py-2">
+                        анализ рынка
+                    </div>
+                </div>
+                <div class="list-card d-flex my-2">
+                    <div class="list-icon">
+                        <img src="materials/images/icon7.png" width="100%" />
+                    </div>
+                    <div class="list-title py-2">
+                       NFT
+                    </div>
+                </div>
+        </div>
+
+        <div class = "col-md-4">
+            <div class="list-card d-flex my-2">
+                    <div class="list-icon">
+                        <img src="materials/images/icon8.png" width="100%" />
+                    </div>
+                    <div class="list-title py-2">
+                       своевременная покупка и продажа
+                    </div>
+                </div>
+                <div class="list-card d-flex my-2">
+                    <div class="list-icon">
+                        <img src="materials/images/icon9.png" width="100%" />
+                    </div>
+                    <div class="list-title py-2">
+                        инвестиции и трейдинг
+                    </div>
+                </div>
+                <div class="list-card d-flex my-2">
+                    <div class="list-icon">
+                        <img src="materials/images/icon10.png" width="100%" />
+                    </div>
+                    <div class="list-title py-2">
+                        Волновой анализ
+                    </div>
+                </div>
+                <div class="list-card d-flex my-2">
+                    <div class="list-icon">
+                        <img src="materials/images/icon1.png" width="100%" />
+                    </div>
+                    <div class="list-title py-2">
+                       play 2 earn
+                    </div>
+                </div>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col-md-12 text-center">
+            <a class="btn button-blue mx-md-2 mt-4">
+            купить
+        </a>
+        </div>
+     
+
+    </div>
+</div>
+</section>
+
+<section>
+<div class="container-fluid my-4 pt-4 d-flex justify-content-center align-items-center" style="background:linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),url('materials/images/bg2.png');background-position:center;background-size:cover; background-repeat:no-repeat; min-height:60vh">
+ <div class="row">
+     <span class="w-100 text-center">
+                @if (!String.IsNullOrEmpty(CourseDate))
+                    {
+                        <h2 class="text-uppercase text-white ">ДО СТАРТА КУРСА ОСТАЛОСЬ</h2>
+                    }
+                    else
+                    {
+                        <h2 class="text-uppercase text-white ">Приобретай курс уже сегодня</h2>
+                    }
+                    
+           @if (!String.IsNullOrEmpty(CourseDate))
+    {
+           <Countdown DateString="@CourseDate"></Countdown>
+    }
+         <a class="btn button-blue mx-md-2 mt-4">
+            купить со скидкой
+        </a>
+     </span>
+     
+ </div>
+</div>
+</section>
+
+<section>
+    <div class="container-fluid" style="max-width:1400px">
+    <div class = "row py-4">
+        <div class = "col-md-12 text-center">
+            <h2 class="text-uppercase text-white ">Состав</h2>
+            <p class="text-white py-4 fs-18">Помогли составить положительные инвестиционные портфели с высокой доходностью и вывести портфели инвесторов с большим минусом в положительное русло</p>
+        </div>
+      </div>
+      @if (Teams!= null)
+    {
+<div class="swiper">
+  <!-- Additional required wrapper -->
+  <div class="swiper-wrapper">
+    <!-- Slides -->
+    @foreach(var item in Teams)
+    {
+       <div class="swiper-slide d-flex justify-content-center h-auto p-md-25">
+      
+                            <div class="card management-card px-2 glowning-blue h-100 max-350">
+                                <div class ="card-header bg-transparent d-flex justify-content-center">
+                                    <img src="@item.ImageUrl" class="img-200"/>
+                                </div>
+                                <div class="card-text text-center">
+                                    <p class='text-uppercase  text-white fs-18 mb-0'>@item.Name</p>
+                                    <p class='text-uppercase  blue-text mb-0'>@item.Position</p>
+                                </div>
+                                <div class="card-body">
+                                    <p class="text-white fs-12">
+                                        @item.Info
+                                    </p>
+                                </div>
+                            </div>
+                
+            </div>
+     }
+                
+    
+    
+  </div>
+  <!-- If we need pagination -->
+  <div class="swiper-pagination my-4 position-relative d-block d-sm-none vs-max-650"></div>
+  
+</div>
+    }
+
+    </div>
+</section>
+    
+    
+
+<section class="mt-4">
+    <div class="container position-relative">
+        <SecondSvg></SecondSvg>
+      <div class = "row py-4">
+
+        <div class="col-md-6 my-4 d-flex align-items-stretch bg-transparent">
+            <div class="w-100 px-2 bg-card d-flex justify-content-center align-items-center">
+                <span class="mw-400">
+                 <img class="bordered-image glowning-blue cursor-pointer" src="materials/images/banner1.gif" width="100%" style="max-width:450px"/>
+                  <p class="text-white fs-16 px-2 my-4">Дипломы NFT будут вручены выпускникам курса METANET EDUCATION</p>
+                </span>
+            </div>
+           
+        </div>
+
+       
+        <div class="col-md-6 my-4 d-flex align-items-stretch bg-transparent" >
+             <div class="w-100 px-2 bg-card d-flex justify-content-center align-items-center">
+               <span class="mw-400">
+                 <img class="bordered-image glowning-blue cursor-pointer" src="materials/images/NFT2.gif" width="100%" style="max-width:450px"/>
+                  <p class="text-white fs-16 px-2 my-4">Телеграм канал с торговыми сигналами. Чат с поддержкой</p>
+                </span>
+            </div>
+        </div>
+      </div>
+
+
+    </div>
+</section>
+    
+
+
+
+
+</section>
+
+@code{
+    List<Team> Teams;
+    Course Course;
+    String? CourseDate = null;
+    protected override async Task OnInitializedAsync()
+    {
+        Teams = await HomeService.GetAllTeams();
+        Course = await HomeService.Course();
+        if(Course != null)
+        {
+
+            CourseDate = DateTime.Now < Course.DateStart ? Course.DateStart.ToString("yyyy/MM/dd HH:mm:ss").Replace('.','/') : null;
+        }
+        try
+        {
+            CurrencyDTO currency = await HomeService.GetCurrency();
+            Console.Write(currency);
+        }
+        catch(Exception e)
+        {
+            Console.Write(e);
+        }
+
+    }
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+        {
+        await JS.InvokeVoidAsync("initSwiper", null);
+     
+        }
+
+    
+
+    
+
+
+}

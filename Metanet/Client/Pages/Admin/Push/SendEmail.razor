@@ -1,0 +1,260 @@
+﻿@page "/admin/send-email"
+@inject IJSRuntime JS
+@inject IUserService UserService
+@inject IMailService MailService
+@inject IToaster Toaster
+@if (!load)
+{
+	<!-- Card body START -->
+				<div class="card-body">
+					<!-- Step content START -->
+					<div class="bs-stepper-content">
+						
+
+							<!-- Step 1 content START -->
+							<div id="step-1" role="tabpanel" class="content show" aria-labelledby="steppertrigger1">
+								<!-- Title -->
+								<h4>Детали рассылки</h4>
+
+								<hr> <!-- Divider -->
+								<EditForm Model="Mail" OnValidSubmit="Save">
+									<DataAnnotationsValidator></DataAnnotationsValidator>
+									<ValidationSummary></ValidationSummary>
+								<!-- Basic information START -->
+								<div class="row g-4">
+
+									<div class="col-12">
+										<label class="form-label">Сообщение всем</label><br />
+										<InputRadioGroup @bind-Value=All>
+											<InputRadio Value=true ></InputRadio> Все пользователи <br />
+											<InputRadio Value=false ></InputRadio> Определенные пользователи <br />
+										</InputRadioGroup>
+										</div>
+										@if (!All)
+										{
+											<div class="col-12">
+												@if (Users != null)
+												{
+													@foreach (KeyValuePair<string,Metanet.Shared.DTO.UserDTO> entry  in Users)
+												   {
+													   <div class="card-header bg-transparent border-bottom d-flex align-items-sm-center justify-content-between">
+											<div class="d-sm-flex align-items-center">
+												<!-- Avatar -->
+												<div class="avatar avatar-md flex-shrink-0">
+													<img class="avatar-img rounded-circle" src="@entry.Value.ImageUrl" alt="avatar">
+												</div>
+												<!-- Info -->
+												<div class="ms-0 ms-sm-2 mt-2 mt-sm-0">
+													<h5 class="mb-0"><Navlink href="@($"/admin/user-update/{@entry.Value.Id}")" target="_blank">@entry.Value.Name </Navlink></h5>
+													<p class="mb-0 small">@entry.Key</p>
+												</div>
+											</div>
+
+											<!-- Edit dropdown -->
+											<div class="dropdown">
+												<a href="admin-instructor-list.html#" class="btn btn-sm btn-light btn-round small mb-0" role="button" id="dropdownShare5" data-bs-toggle="dropdown" aria-expanded="false">
+													<i class="bi bi-three-dots fa-fw"></i>
+												</a>
+												<!-- dropdown button -->
+												<ul class="dropdown-menu dropdown-w-sm dropdown-menu-end min-w-auto shadow rounded" aria-labelledby="dropdownShare5" style="">
+														
+													<li><a class="dropdown-item cursor-pointer" href="@($"/admin/user-update/{@entry.Value.Id}")" target="_blank"><i class="fas fa-user fa-fw me-2"></i>Изменить </a></li>
+													<li><a class="dropdown-item text-danger cursor-pointer" @onclick="@(()=>DeleteUser(@entry.Key))"><i class="bi bi-trash fa-fw me-2"></i>Удалить</a></li>
+												</ul>
+											</div>
+										</div>
+											   }
+											}
+										</div>
+										
+											<div class="col-12">
+											<label class="form-label">Поиск  Пользователя по имени, логину или почте *</label>
+											<InputText class="form-control"  @bind-Value="Search" @oninput="@((ChangeEventArgs __e) => SearchUser(__e?.Value?.ToString()))"></InputText>
+											<label class="form-label">Выберите пользователя *</label>
+											<InputSelect  @bind-Value="Email"
+											
+											class="w-100 form-select" multiple="multiple">
+											
+													@if(SearchedUser != null)
+													{
+														@foreach (var user in SearchedUser)
+													{
+															@if (!Users.ContainsKey(user.Email))
+																{
+																	<option @onclick="@(() => SelectUser(user.Email,user))" value="@user.Email">@user.Email (@user.Email)</option>
+																}
+															}
+													}
+											</InputSelect>	
+											</div>
+										}
+					
+									<div class="col-12">
+										<label class="form-label">Тема сообщения *</label>
+										<InputTextArea class="form-control"  @bind-Value="Mail.Subject"></InputTextArea>
+										<ValidationMessage For="()=>Mail.Subject"></ValidationMessage>
+									</div>
+									<!-- Course title -->
+									<div class="col-12">
+										<label class="form-label">Основное сообщение *</label>
+										<InputTextArea class="form-control"  @bind-Value="Mail.Body"></InputTextArea>
+										<ValidationMessage For="()=>Mail.Body"></ValidationMessage>
+										
+									</div>
+
+									<div class="col-12">
+										@if(files != null){
+											@foreach (var item in files)
+											{
+												<p>@item.Name</p>
+											}
+										}
+											@if (files.Count <= 5)
+											{
+												<label class="form-label">Вложенные файлы (не более 5, макс размер - 2мб) </label>
+														<InputFile class="form-control" OnChange="UploadFile" multiple></InputFile>
+														<ValidationMessage For="()=>Mail.Attachments"></ValidationMessage>
+											}
+							
+									</div>
+									
+									
+								
+									
+
+
+									<!-- Step 1 button -->
+									<div class="d-flex justify-content-end mt-3">
+										<button class="btn btn-primary next-btn mb-0">Сохранить</button>
+									</div>
+								</div>
+
+								</EditForm>
+								<!-- Basic information START -->
+							</div>
+							<!-- Step 1 content END -->
+					</div>
+				</div>
+	<!-- Card body END -->
+}
+else
+{
+	<Loader loader=true></Loader>
+}
+
+
+
+
+
+
+
+
+@code {
+	MailRequest Mail = new MailRequest();
+	bool All = true;
+	Dictionary<string,Metanet.Shared.DTO.UserDTO> Users = new Dictionary<string,Metanet.Shared.DTO.UserDTO>();
+	string Email = "";
+	IEnumerable<Metanet.Shared.DTO.UserDTO> SearchedUser;
+	string Search = "";
+	List<IBrowserFile> files = new List<IBrowserFile>();
+	bool load = false;
+	protected override async Task OnInitializedAsync()
+	{
+
+	}
+
+	protected async override Task OnAfterRenderAsync(bool firstRender)
+	{
+		await JS.InvokeVoidAsync("initSelect2", null);
+
+	}
+
+	public async Task UploadFile(InputFileChangeEventArgs e)
+	{
+
+		files.Clear();
+		if (files.Count() <=5)
+		{
+			foreach (var item in e.GetMultipleFiles(maximumFileCount: 5))
+			{
+				files.Add(item);
+			}
+		}
+
+	}
+
+	public async Task SearchUser(String search)
+	{
+		if(search.Length >= 3)
+		{
+			SearchedUser = await UserService.Search(search);
+		}
+
+	}
+
+
+	public async Task DeleteFile()
+	{
+
+	}
+
+	public async Task SelectUser(string email,Metanet.Shared.DTO.UserDTO user){
+		if(email != null && user != null)
+		{
+			if (!Users.ContainsKey(email))
+			{
+				Users.Add(email,user);
+			}
+
+		}
+	}
+
+	public async Task DeleteUser(string email)
+	{
+		if (!string.IsNullOrEmpty(email))
+		{
+			Users.Remove(email);
+		}
+	}
+
+
+
+
+	async Task  Save(){
+		try
+		{
+			Mail.CurrentFile = files;
+			if (!All)
+			{
+				if(Users.Count() < 1)
+				{
+					Toaster.Warning("Выберите получателя!");
+				}
+				else{
+					load = true;
+					Toaster.Info("Отправляем сообщение, это может занять пару минут");
+					Mail.Emails = Users.Keys.ToList();
+					var result = await MailService.SendEmail(Mail);
+				}
+			}
+			else
+			{
+				load = true;
+				Toaster.Info("Отправляем сообщение, это может занять пару минут");
+				var result =await MailService.SendEmail(Mail);
+			}
+		}
+		catch(Exception ex)
+		{
+			Console.WriteLine($"{ex.ToString()}");
+		}
+		load = false;
+		Mail = new MailRequest();
+		SearchedUser = null;
+		Users.Clear();
+		files.Clear();
+		Search = "";
+
+	}
+
+}

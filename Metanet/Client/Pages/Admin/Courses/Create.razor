@@ -1,0 +1,126 @@
+﻿@page "/admin/course-create"
+@inject IFileUploader fileUploader
+@inject ICourseService CourseService
+@inject NavigationManager NavigationManager
+@inject Sotsera.Blazor.Toaster.IToaster Toaster
+@using Metanet.Shared.DTO
+
+
+	<!-- Card body START -->
+				<div class="card-body">
+					<!-- Step content START -->
+					<div class="bs-stepper-content">
+						
+
+							<!-- Step 1 content START -->
+							<div id="step-1" role="tabpanel" class="content show" aria-labelledby="steppertrigger1">
+								<!-- Title -->
+								<h4>Детали курса</h4>
+
+								<hr> <!-- Divider -->
+								<EditForm Model="Course" OnValidSubmit="SaveCourse">
+									<DataAnnotationsValidator></DataAnnotationsValidator>
+									<SummaryValidation></SummaryValidation>
+								<!-- Basic information START -->
+								<div class="row g-4">
+									<!-- Course title -->
+									<div class="col-12">
+										<label class="form-label">Наименование курса</label>
+										<InputText class="form-control" @bind-Value="Course.Title"></InputText>
+										<ValidationMessage For="()=>Course.Title"></ValidationMessage>
+									</div>
+									<div class="col-12">
+										<label class="form-label">Стоимость курса KZT</label>
+										<InputNumber class="form-control"  min="100" max="100000000" @bind-Value="Course.Price"></InputNumber>
+										<ValidationMessage For="()=>Course.Price"></ValidationMessage>
+									</div>
+									<div class="col-12">
+										<label class="form-label">Описание курса </label>
+										<InputTextArea class="form-control"  @bind-Value="Course.Description"></InputTextArea>
+										<ValidationMessage For="()=>Course.Description"></ValidationMessage>
+									</div>
+									<div class="col-6">
+										<label class="form-label">Дата начала</label>
+										<InputDate class="form-control"   @bind-Value="Course.DateStart"></InputDate>
+										<ValidationMessage For="()=>Course.DateStart"></ValidationMessage>
+									</div>
+									<div class="col-6">
+										<label class="form-label">Дата конца</label>
+										<InputDate class="form-control"   @bind-Value="Course.DateEnd"></InputDate>
+										<ValidationMessage For="()=>Course.DateEnd"></ValidationMessage>
+									</div>
+
+									
+
+
+									<div class="col-12">
+										@if(loading){
+											<Loading></Loading>
+										}
+									@if(!string.IsNullOrEmpty(Course.ImageUrl)){
+											<div class="card" style="width: 18rem;">
+											  <img class="card-img-top" src="@Course.ImageUrl" alt="Card image cap">
+											  <div class="card-body text-center">		
+												<button class="btn btn-danger" @onclick="DeleteFile">Удалить</button>
+											  </div>
+											</div>
+											}
+											
+										<label class="form-label">Изображение</label>
+										<InputFile class="form-control" OnChange="UploadFile"></InputFile>
+										<ValidationMessage For="()=>Course.ImageUrl"></ValidationMessage>
+									</div>
+
+
+									<!-- Step 1 button -->
+									<div class="d-flex justify-content-end mt-3">
+										<button class="btn btn-primary next-btn mb-0">Сохранить</button>
+									</div>
+								</div>
+
+								</EditForm>
+								<!-- Basic information START -->
+							</div>
+							<!-- Step 1 content END -->
+					</div>
+				</div>
+				<!-- Card body END -->
+
+@code {
+	CourseCreateDTO Course = new CourseCreateDTO();
+	bool loading = false;
+	public async Task UploadFile(InputFileChangeEventArgs e)
+	{
+		loading = true;
+		string[] resolved_format = { ".jpg", ".jpeg", ".png", ".bmp", ".gif" };
+		string oldUrl = Course.ImageUrl;
+		Course.ImageUrl = await fileUploader.UploadOneFile(e, resolved_format, 20,oldUrl);
+		if (oldUrl != Course.ImageUrl)
+		{
+			await fileUploader.DeleteFile(oldUrl);
+		}
+		loading = false;
+		StateHasChanged();
+
+
+	}
+	public async Task DeleteFile()
+	{
+		Course.ImageUrl = await fileUploader.DeleteFile(Course.ImageUrl);
+		StateHasChanged();
+	}
+
+	public async Task SaveCourse()
+	{
+		if(await CourseService.CreateCourse(Course)){
+			NavigationManager.NavigateTo("/admin/courses");
+		}
+		else
+		{
+			
+		}
+	}
+
+    
+
+}

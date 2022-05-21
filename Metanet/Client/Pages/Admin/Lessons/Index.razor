@@ -1,0 +1,183 @@
+﻿@page "/admin/lessons"
+@inject ILessonService service
+@inject IFileUploader fileService
+
+
+@if(Lessons != null)
+{
+	@if(Lessons.Count > 0)
+	{
+		<!-- Title -->
+		<div class="row mb-3">
+			<div class="col-12 d-sm-flex justify-content-between align-items-center">
+				<h1 class="h3 mb-2 mb-sm-0">Видеоуроки<span class="badge bg-orange bg-opacity-10 text-orange">@Lessons.Count</span></h1>
+				<NavLink href="admin/lesson-create" class="btn btn-sm btn-primary mb-0">Создать урок</NavLink>
+			</div>
+		</div>
+
+		<!-- Card START -->
+		<div class="card bg-transparent border">
+
+			<!-- Card body START -->
+			<div class="card-body">
+				<!-- Course table START -->
+				<div class="table-responsive border-0 rounded-3">
+					<!-- Table START -->
+					<table class="table table-dark-gray align-middle p-4 mb-0 table-hover">
+						<!-- Table head -->
+						<thead>
+							<tr>
+								<th scope="col" class="border-0 rounded-start">Наименование блока</th>
+								<th scope="col" class="border-0">Блок</th>
+								<th scope="col" class="border-0">Материалы</th>
+								<th scope="col" class="border-0">Предыдущий</th>
+								<th scope="col" class="border-0">Следующий</th>
+								<th scope="col" class="border-0">Номер урока</th>
+								<th scope="col" class="border-0 rounded-end">Действия</th>
+							</tr>
+						</thead>
+
+						<!-- Table body START -->
+						<tbody>
+							@foreach(var item in Lessons)
+							{
+								<tr>
+								<!-- Table data -->
+								<td>
+									<div class="d-flex align-items-center position-relative">
+										<!-- Image -->
+										<div class="w-60px">
+											<img src="@item.ImageUrl" class="rounded" alt="">
+										</div>
+										<!-- Title -->
+										<h6 class="mb-0 ms-2">	
+											<p>@item.Title</p>
+										</h6>
+									</div>
+								</td>
+
+								<!-- Table data -->
+								<td>
+									@if(item.Blog != null)
+									{
+										<Navlink href="@($"admin/blog-edit/{@item.Blog.Alias}")">@item.Blog.Title</Navlink>
+									}
+									else
+									{
+										<p></p>
+									}
+											
+								</td>
+
+								<td>
+									@if(item.Materials != null)
+									{
+										<p>@item.Materials.Count()</p>
+									}
+									else
+									{
+										<p>0</p>
+									}
+
+								</td>
+								<td>
+									@if(item.PrevLesson != null)
+									{
+										<p>@item.PrevLesson.Title</p>
+									}
+									else
+									{
+										<p>-</p>
+									}
+
+								</td>
+								<td>
+									@if(item.NextLesson != null)
+									{
+										<p>@item.NextLesson.Title</p>
+									}
+									else
+									{
+										<p>-</p>
+									}
+
+								</td>
+
+								
+								<!-- Table data -->
+								
+
+								<td>
+									<p>@item.Number</p>		
+								</td>
+
+								<td>
+									<div class="dropdown">
+									  <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										Действия
+									  </button>
+									  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+										<NavLink class="dropdown-item" href=@($"/admin/lesson-edit/{item.Alias}")>Изменить</NavLink>
+										<button class="bg-transparent dropdown-item text-danger" @onclick="()=>DeleteLesson(item.Id,item.ImageUrl,item.VideoUrl)">Удалить</button>
+										<div class="dropdown-divider"></div>
+										<NavLink class="dropdown-item" href="@($"/admin/materials/{item.Id}")">Материалы</NavLink>
+										
+									  </div>
+									</div>
+								</td>
+
+								
+							</tr>
+							}
+							<!-- Table row -->
+						</tbody>
+						<!-- Table body END -->
+					</table>
+					<!-- Table END -->
+				</div>
+				<!-- Course table END -->
+			</div>
+			<!-- Card body END -->
+
+			<!-- Card footer START -->
+			
+			<!-- Card footer END -->
+		</div>
+		<!-- Card END -->
+		<!-- Page main content END -->
+	}
+	else
+	{
+		<!-- Title -->
+		<div class="row mb-3">
+			<div class="col-12 d-sm-flex justify-content-between align-items-center">
+				<h1 class="h3 mb-2 mb-sm-0">Уроки <span class="badge bg-orange bg-opacity-10 text-orange">0</span></h1>
+				<NavLink href="admin/lesson-create" class="btn btn-sm btn-primary mb-0">Создать урок</NavLink>
+			</div>
+		</div>
+	}
+
+}
+else
+{
+	<Loader loader=true></Loader>
+}
+
+
+@code {
+	List<Lesson> Lessons;
+
+	protected override async Task OnInitializedAsync()
+	{
+		Lessons = await service.GetAllLesson();
+
+	}
+
+	protected async Task DeleteLesson(int Id,string ImageUrl,string VideoUrl)
+	{
+		bool result = await service.Delete(Id);
+		if(result){ fileService.DeleteFile(ImageUrl);fileService.DeleteFile(VideoUrl); }
+		Lessons = await service.GetAllLesson();
+	}
+
+}

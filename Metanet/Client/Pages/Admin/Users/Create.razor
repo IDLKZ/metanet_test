@@ -1,0 +1,154 @@
+﻿@page "/admin/user-create"
+@inject IFileUploader FileUploader
+@inject IUserService UserService
+@inject IToaster Toaster
+@inject NavigationManager NavigationManager;
+
+<!-- Card body START -->
+				<div class="card-body">
+					<!-- Step content START -->
+					<div class="bs-stepper-content">
+						
+
+							<!-- Step 1 content START -->
+							<div id="step-1" role="tabpanel" class="content show" aria-labelledby="steppertrigger1">
+								<!-- Title -->
+								<h4>Детали нового пользователя</h4>
+
+								<hr> <!-- Divider -->
+								<EditForm Model="User" OnValidSubmit="Save">
+									<DataAnnotationsValidator></DataAnnotationsValidator>
+									<SummaryValidation></SummaryValidation>
+								<!-- Basic information START -->
+								<div class="row g-4">
+									<!-- Course title -->
+									<div class="col-12">
+										<label class="form-label">Роль пользователя</label>
+										<InputSelect class="form-control" @bind-Value="User.Role">
+											<option value="">Не выбрано</option>
+											<option value="Customer">Пользователь</option>
+											<option value="Admin">Администратор</option>
+
+										</InputSelect>
+										<ValidationMessage For="()=>User.Role"></ValidationMessage>
+									</div>
+									<div class="col-12">
+										<label class="form-label">Логин пользователя</label>
+										<InputText class="form-control" @bind-Value="User.UserName"></InputText>
+										<ValidationMessage For="()=>User.UserName"></ValidationMessage>
+									</div>
+									<div class="col-12">
+										<label class="form-label">Имя пользователя</label>
+										<InputText class="form-control" @bind-Value="User.Name"></InputText>
+										<ValidationMessage For="()=>User.Name"></ValidationMessage>
+									</div>
+									<div class="col-12">
+										<label class="form-label">Почта пользователя</label>
+										<InputText type="email" class="form-control" @bind-Value="User.Email"></InputText>
+										<ValidationMessage For="()=>User.Email"></ValidationMessage>
+									</div>
+									<div class="col-12">
+										<label class="form-label">Номер пользователя</label>
+										<InputText placeholder="+77" class="form-control" @bind-Value="User.PhoneNumber"></InputText>
+										<ValidationMessage For="()=>User.PhoneNumber"></ValidationMessage>
+									</div>
+									<div class="col-12">
+										<label class="form-label">Описание пользоватаеля(необязательно) </label>
+										<InputTextArea class="form-control"  @bind-Value="User.Description"></InputTextArea>
+										<ValidationMessage For="()=>User.Description"></ValidationMessage>
+									</div>
+									
+									<div class="col-12">
+										<label class="form-label">Пароль пользователя</label>
+										<InputText type="password" class="form-control" @bind-Value="User.Password"></InputText>
+										<ValidationMessage For="()=>User.Password"></ValidationMessage>
+									</div>
+									
+									<div class="col-12">
+										<label class="form-label">Повторите пароль пользователя</label>
+										<InputText type="password" class="form-control" @bind-Value="User.ConfirmPassword"></InputText>
+										<ValidationMessage For="()=>User.ConfirmPassword"></ValidationMessage>
+									</div>
+
+
+									<div class="col-12">
+										@if(loading){
+											<Loading></Loading>
+										}
+									@if(!string.IsNullOrEmpty(User.ImageUrl)){
+											<div class="card" style="width: 18rem;">
+											  <img class="card-img-top" src="@User.ImageUrl" alt="Card image cap">
+											  <div class="card-body text-center">		
+												<button class="btn btn-danger" @onclick="DeleteFile">Удалить</button>
+											  </div>
+											</div>
+											}
+											
+										<label class="form-label">Изображение (необязательно)</label>
+										<InputFile class="form-control" OnChange="UploadFile"></InputFile>
+										<ValidationMessage For="()=>User.ImageUrl"></ValidationMessage>
+									</div>
+
+
+									<!-- Step 1 button -->
+									<div class="d-flex justify-content-end mt-3">
+										<button class="btn btn-primary next-btn mb-0">Сохранить</button>
+									</div>
+								</div>
+
+								</EditForm>
+								<!-- Basic information START -->
+							</div>
+							<!-- Step 1 content END -->
+					</div>
+				</div>
+				<!-- Card body END -->
+
+@code{
+	public CreateUserDTO User = new CreateUserDTO();
+	public string[] Roles = { "Admin", "Customer" };
+	bool loading = false;
+	public async Task UploadFile(InputFileChangeEventArgs e)
+	{
+		loading = true;
+		string[] resolved_format = { ".jpg", ".jpeg", ".png", ".bmp", ".gif" };
+		string oldUrl = User.ImageUrl;
+		User.ImageUrl = await FileUploader.UploadOneFile(e, resolved_format, 20,oldUrl);
+		if (oldUrl != User.ImageUrl)
+		{
+			await FileUploader.DeleteFile(oldUrl);
+		}
+		loading = false;
+		StateHasChanged();
+
+
+	}
+	public async Task DeleteFile()
+	{
+		User.ImageUrl = await FileUploader.DeleteFile(User.ImageUrl);
+		StateHasChanged();
+	}
+
+	public async Task Save()
+	{
+		if (Roles.Contains(User.Role))
+		{
+			var result = await UserService.Create(User);
+			if(result != null)
+			{
+				NavigationManager.NavigateTo("/admin/users");
+			}
+		}
+		else
+		{
+			Toaster.Warning("Выберите роль");
+		}
+
+	}
+
+
+
+
+
+}
+

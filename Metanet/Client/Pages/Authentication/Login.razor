@@ -1,0 +1,112 @@
+﻿@page "/login";
+@using Metanet.Shared
+
+@inject IAuthenticationService authService;
+@inject NavigationManager navigation;
+@inject Sotsera.Blazor.Toaster.IToaster Toaster
+<section>
+<div class = "container-fluid default-bg pt-120">
+    <div class = "row d-flex justify-content-center align-items-center min-vh-100">
+        <div class = "col-md-6">
+           
+            <div class = "card text-center py-2">
+                <h2>Вход</h2>
+                @if(Errors != null)
+                {
+                    <div class= "aler alert-danger">
+                        @foreach(var item in Errors)
+                        {
+                            <p>@item</p>
+                        }
+                    </div>
+                }
+                
+                
+
+
+                <div class = "card-body">
+            <EditForm Model="model" OnValidSubmit = "SignIn">
+            <DataAnnotationsValidator />
+    
+          
+
+          <div class="form-group my-2">
+                <label for="exampleInputEmail1">Email *</label> 
+                  <InputText type="email" @bind-Value="model.Email" class="form-control" placeholder="Email..." />
+                  <ValidationMessage For="(()=>model.Email)" />
+           </div>
+
+          
+
+           <div class="form-group my-2">
+                <label for="exampleInputEmail1">Пароль *</label> 
+                  <InputText @bind-Value="model.Password" class="form-control" type="password" />
+                  <ValidationMessage For="(()=>model.Password)" />
+           </div>
+
+          
+           
+             <div class = "text-center">
+                        @if (process)
+                        {
+                           <Loading></Loading>
+                        }
+                        else
+                        {
+                             <button type ="submit" class = "btn btn-info">Вход</button>
+                        }
+                      
+                </div>
+                </EditForm>
+                </div>
+                <div class="card-text">
+                    <NavLink href="/register">Нет аккаунта? Создать аккаунт</NavLink><br />
+                    <NavLink href="/forget">Забыли пароль?</NavLink>
+                </div>
+                
+             </div>
+             
+             
+        </div>
+    </div>
+
+</div>
+</section>
+
+
+
+
+@code {
+
+    LoginDTO model = new LoginDTO();
+    public bool process = false;
+    public IEnumerable<string>? Errors = null;
+    public string Message = "";
+
+
+
+    public async Task SignIn()
+    {
+        Toaster.Info("Вход в личный кабинет");
+        process = true;
+        CommonResponse commonResponse = await authService.SignIn(model);
+        process = false;
+        bool result = commonResponse.Success;
+
+        if(result == true)
+        {
+            Toaster.Success("Добро пожаловать!");
+            navigation.NavigateTo("/", true);
+		
+        }
+        else
+        {
+            Toaster.Error(commonResponse.Message ?? "Упс... что-то пошло не так");
+            Errors = commonResponse.ErrorMessages;
+        }
+
+
+    }
+
+}
+

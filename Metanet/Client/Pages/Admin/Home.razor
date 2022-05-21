@@ -1,0 +1,71 @@
+﻿@page "/admin"
+@layout AdminLayout
+@inject IHomeService HomeService
+@if(Stats != null){
+    <div class="container">
+
+    <div class="row g-4 mb-4">
+			<!-- Course item -->
+			<div class="col-sm-6 col-lg-4">
+				<div class="text-center p-4 bg-primary bg-opacity-10 border border-primary rounded-3">
+					<i class="fas fa-user" style="font-size:30px"></i>
+					<h6>Всего пользователй</h6>
+					<h2 class="mb-0 fs-1 text-primary">@Stats.Users</h2>
+				</div>
+			</div>
+
+			<!-- Course item -->
+			<div class="col-sm-6 col-lg-4">
+				<div class="text-center p-4 bg-success bg-opacity-10 border border-success rounded-3">
+					<i class="fas fa-book" style="font-size:30px"></i>
+					<h6>Активных курсов</h6>
+					<h2 class="mb-0 fs-1 text-success">@Stats.Course</h2>
+				</div>
+			</div>
+
+			<div class="col-sm-6 col-lg-4">
+				<div class="text-center p-4 bg-warning bg-opacity-10 border border-warning rounded-3">
+					<i class="fas fa-camera" style="font-size:30px"></i>
+					<h6>Активных блоков</h6>
+					<h2 class="mb-0 fs-1 text-success">@Stats.Blogs</h2>
+				</div>
+			</div>
+
+			<div class="col-sm-6 col-lg-4">
+				<div class="text-center p-4 bg-success bg-opacity-10 border border-success rounded-3">
+					<i class="fas fa-video" style="font-size:30px"></i>
+					<h6>Активных уроков</h6>
+					<h2 class="mb-0 fs-1 text-success">@Stats.Lessons</h2>
+				</div>
+			</div>
+
+			<div class="col-sm-6 col-lg-4">
+				<div class="text-center p-4 bg-info bg-opacity-10 border border-info rounded-3">
+					<i class="fas fa-box" style="font-size:30px"></i>
+					<h6>Активных материалов</h6>
+					<h2 class="mb-0 fs-1 text-success">@Stats.Materials</h2>
+				</div>
+			</div>
+
+		
+			
+		</div>
+
+</div>
+}
+
+
+@code {
+
+    StatsDTO Stats;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        Stats = await HomeService.GetStats();
+    }
+
+
+
+
+}

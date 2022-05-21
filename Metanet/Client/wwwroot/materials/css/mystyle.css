@@ -1,0 +1,334 @@
+﻿@font-face {
+    font-family: 'Road Radio Regular';
+    src: url('RoadRadio.eot');
+    src: url('../fonts/RoadRadio.eot') format('embedded-opentype'),
+        url('../fonts/RoadRadio.woff') format('woff'),
+        url('../fonts/RoadRadio.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+body {
+    font-family: 'Road Radio Regular'!important;
+}
+
+section{
+
+}
+.dark-nav-link{
+    background:#111111!important;
+}
+
+.banner {
+    min-height: 100vh;
+    background-position: center !important;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: end;
+    padding-bottom: 10%;
+    background-repeat: no-repeat;
+    max-height: 1400px;
+    min-height: 100vh;
+    align-items: flex-end;
+    -webkit-align-items: flex-end;
+}
+.lh-2{
+    line-height:2!important;
+}
+.bg-card {
+    background-position: center !important;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+.banner-text {
+    color: white;
+    font-weight: bold;
+}
+
+.banner-subtext {
+    color: white;
+    font-weight: 700;
+    font-size: 18px;
+}
+
+.button-blue {
+    background: #214FF1!important;
+    color: white !important;
+    border-radius: 50px !important;
+    padding: 10px !important;
+    font-size: 14px!important;
+    font-weight: bold!important;
+    text-transform: uppercase!important;
+}
+
+.transparent-button-blue {
+    background: rgba(33, 79, 241, 0.3)!important;
+    border-color: #214FF1 !important;
+    color: white !important;
+    border-radius: 50px !important;
+    padding: 10px !important;
+    font-size: 14px !important;
+    font-weight: bold !important;
+    text-transform: uppercase !important;
+}
+.mw-400{
+    max-width:400px!important;
+}
+.mw-450 {
+    max-width: 450px !important;
+}
+.img-250{
+    width:250px!important;
+}
+.img-200 {
+    width: 200px !important;
+}
+@media screen and (min-width:450px){
+.p-md-25 {
+    padding:25px!important;
+}
+}
+
+
+.button-white {
+    background: white!important;
+    color: #214FF1!important;
+    border-radius: 50px!important;
+    padding: 10px!important;
+    font-size: 14px!important;
+    font-weight: 500!important;
+    text-transform: uppercase!important;
+}
+
+.list-icon {
+    width: 20%;
+}
+
+.list-title {
+    width: 80%;
+    display: flex;
+    align-items: center;
+    color: white;
+    font-size: 16px;
+    font-weight: bolder;
+    text-transform: uppercase;
+    padding-left: 10px;
+}
+
+.management-card {
+    min-height: 320px;
+    background: #160E33 !important;
+    border-radius: 15px!important;
+}
+
+.glowning-blue {
+    border:2px solid #214FF1; 
+    -webkit-box-shadow: 0px 0px 12px 7px rgba(2,19,255,0.32);
+    -moz-box-shadow: 0px 0px 12px 7px rgba(2,19,255,0.32);
+    box-shadow: 0px 0px 12px 7px rgba(2,19,255,0.32);
+}
+
+.blue-text {
+    color: #214FF1;
+}
+
+
+.fs-30 {
+    font-size: 30px;
+}
+
+.fs-28 {
+    font-size: 28px;
+}
+
+.fs-26 {
+    font-size: 26px;
+}
+
+.fs-24 {
+    font-size: 24px;
+}
+
+.fs-22 {
+    font-size: 22px;
+}
+
+.fs-20 {
+    font-size: 20px;
+}
+
+.fs-18 {
+    font-size: 18px;
+}
+
+.fs-16 {
+    font-size: 16px;
+}
+
+.fs-14 {
+    font-size: 14px;
+}
+
+.fs-12 {
+    font-size: 12px;
+}
+
+.fs-10 {
+    font-size: 10px;
+}
+.min-vh-450{
+    min-height:450px;
+}
+.min-vh-550 {
+    min-height: 550px;
+}
+.footer-bg {
+    background:#111111
+}
+
+.max-350{
+    max-width:350px;
+}
+
+.register-bg {
+    background-image: url(https://images.unsplash.com/photo-1553095066-5014bc7b7f2d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8d2FsbCUyMGJhY2tncm91bmR8ZW58MHx8MHx8&w=1000&q=80);
+    background-position:center;
+    background-size:cover;
+    background-repeat:no-repeat;
+}
+.navbar-bg {
+    background: #111111!important;
+}
+.default-bg {
+    background-image: url('/materials/images/main-bg.png'); 
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+.course-blog{
+    min-height:50px;
+    border-radius:20px;
+}
+.active-course-blog {
+    background: #2B61D1;
+    -webkit-box-shadow: 0px 0px 17px 0px rgba(43,98,209,0.9);
+    -moz-box-shadow: 0px 0px 17px 0px rgba(43,98,209,0.9);
+    box-shadow: 0px 0px 17px 0px rgba(43,98,209,0.9);
+    cursor:pointer;
+}
+
+.active-course-blog {
+    background: #2B61D1;
+}
+.not-active-course-blog{
+    background:rgba(84, 84, 84, 0.8)
+}
+.not-active-image {
+    filter: grayscale(100%);
+}
+.absolute-text{
+    position:absolute;
+    top:10%;
+    left:10%;
+}
+.absolute-image {
+    position: absolute;
+    bottom: 10%;
+    right: 10%;
+}
+.tab-button {
+    background: rgba(196, 196, 196, 0.3)!important;
+}
+
+.tab-button.active {
+    background: #2B61D1!important;
+}
+.bordered-image{
+    border-radius:10%;
+}
+.cursor-pointer{
+    cursor:pointer!important;
+}
+
+.labels-date{
+    width:100%;
+    font-size:12px!important;
+}
+.countdown-container {
+    --bs-gutter-x: 0!important;
+}
+.date-timer{
+    display:flex!important;
+    width:100% !important;
+}
+.date-timer span {
+        width: 25%!important;
+}
+.timer-labels {
+    display: flex !important;
+    width: 100% !important;
+}
+    .timer-labels span {
+        width: 25%!important;
+    }
+
+.countdown-block {
+    display: block!important;
+    min-width: 300px!important;
+    padding: 10px 20px 10px 20px!important;
+   
+}
+
+.video-background {
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: -1;
+}
+
+@media (max-width:750px) {
+    .footer-column{
+        text-align: center!important
+    }
+}
+
+.pt-120{
+    padding-top:120px;
+}
+.marquee {
+    position: relative;
+    //width: 100vw;
+    max-width: 100%;
+    height: 30px;
+    overflow-x: hidden;
+    background:#111111;
+}
+
+.track {
+    position: absolute;
+    white-space: nowrap;
+    will-change: transform;
+    animation: marquee 16s linear infinite;
+}
+
+@keyframes marquee {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-50%);
+    }
+}
+@media (max-width:650px) {
+    .vs-max-650 {
+        display: block!important;
+    }
+}
+
+

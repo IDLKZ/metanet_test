@@ -1,0 +1,12 @@
+/Users/misti/Desktop/metanet/Metanet/Shared/bin/Debug/net6.0/Metanet.Shared.deps.json
+/Users/misti/Desktop/metanet/Metanet/Shared/bin/Debug/net6.0/Metanet.Shared.dll
+/Users/misti/Desktop/metanet/Metanet/Shared/bin/Debug/net6.0/ref/Metanet.Shared.dll
+/Users/misti/Desktop/metanet/Metanet/Shared/bin/Debug/net6.0/Metanet.Shared.pdb
+/Users/misti/Desktop/metanet/Metanet/Shared/obj/Debug/net6.0/Metanet.Shared.csproj.AssemblyReference.cache
+/Users/misti/Desktop/metanet/Metanet/Shared/obj/Debug/net6.0/Metanet.Shared.GeneratedMSBuildEditorConfig.editorconfig
+/Users/misti/Desktop/metanet/Metanet/Shared/obj/Debug/net6.0/Metanet.Shared.AssemblyInfoInputs.cache
+/Users/misti/Desktop/metanet/Metanet/Shared/obj/Debug/net6.0/Metanet.Shared.AssemblyInfo.cs
+/Users/misti/Desktop/metanet/Metanet/Shared/obj/Debug/net6.0/Metanet.Shared.csproj.CoreCompileInputs.cache
+/Users/misti/Desktop/metanet/Metanet/Shared/obj/Debug/net6.0/Metanet.Shared.dll
+/Users/misti/Desktop/metanet/Metanet/Shared/obj/Debug/net6.0/ref/Metanet.Shared.dll
+/Users/misti/Desktop/metanet/Metanet/Shared/obj/Debug/net6.0/Metanet.Shared.pdb

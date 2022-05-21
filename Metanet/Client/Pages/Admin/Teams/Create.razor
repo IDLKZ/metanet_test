@@ -1,0 +1,114 @@
+﻿@page "/admin/teams-create"
+@inject ITeamService TeamService
+@inject NavigationManager NavigationManager
+@inject IFileUploader FileUploader
+
+
+
+
+
+
+	<!-- Card body START -->
+				<div class="card-body">
+					<!-- Step content START -->
+					<div class="bs-stepper-content">
+						
+
+							<!-- Step 1 content START -->
+							<div id="step-1" role="tabpanel" class="content show" aria-labelledby="steppertrigger1">
+								<!-- Title -->
+								<h4>Детали команды</h4>
+
+								<hr> <!-- Divider -->
+								<EditForm Model="Team" OnValidSubmit="Save">
+									<DataAnnotationsValidator></DataAnnotationsValidator>
+								
+								<!-- Basic information START -->
+								<div class="row g-4">
+									<!-- Course title -->
+									<div class="col-12">
+										<label class="form-label">ФИО</label>
+										<InputText class="form-control" @bind-Value="Team.Name"></InputText>
+										<ValidationMessage For="()=>Team.Name"></ValidationMessage>
+									</div>
+									<div class="col-12">
+										<label class="form-label">Позиция</label>
+										<InputText class="form-control" @bind-Value="Team.Position"></InputText>
+										<ValidationMessage For="()=>Team.Position"></ValidationMessage>
+									</div>
+									<div class="col-12">
+										<label class="form-label">Описание сотрудника </label>
+										<InputTextArea class="form-control"  @bind-Value="Team.Info"></InputTextArea>
+										<ValidationMessage For="()=>Team.Info"></ValidationMessage>
+									</div>
+									<div class="col-12">
+										@if(loading){
+											<Loading></Loading>
+										}
+									@if(!string.IsNullOrEmpty(Team.ImageUrl)){
+											<div class="card" style="width: 18rem;">
+											  <img class="card-img-top" src="@Team.ImageUrl" alt="Card image cap">
+											  <div class="card-body text-center">		
+												<button class="btn btn-danger" @onclick="DeleteFile">Удалить</button>
+											  </div>
+											</div>
+											}
+											
+										<label class="form-label">Изображение</label>
+										<InputFile class="form-control" OnChange="UploadFile"></InputFile>
+										<ValidationMessage For="()=>Team.ImageUrl"></ValidationMessage>
+									</div>
+
+
+									<!-- Step 1 button -->
+									<div class="d-flex justify-content-end mt-3">
+										<button class="btn btn-primary next-btn mb-0">Сохранить</button>
+									</div>
+								</div>
+
+								</EditForm>
+								<!-- Basic information START -->
+							</div>
+							<!-- Step 1 content END -->
+					</div>
+				</div>
+				<!-- Card body END -->
+@code {
+	TeamCreateDTO Team = new TeamCreateDTO();
+	bool loading = false;
+
+	public async Task UploadFile(InputFileChangeEventArgs e)
+	{
+		loading = true;
+		string[] resolved_format = {".jpg", ".jpeg", ".png", ".bmp", ".gif"};
+
+		Team.ImageUrl = await FileUploader.DeleteFile(Team.ImageUrl);
+		Team.ImageUrl = await FileUploader.UploadOneFile(e,resolved_format,10);
+		loading = false;
+		StateHasChanged();
+
+
+	}
+	public async Task DeleteFile()
+	{
+		Team.ImageUrl = await FileUploader.DeleteFile(Team.ImageUrl);
+		StateHasChanged();
+	}
+
+
+
+	public async Task Save()
+	{
+		if(await TeamService.Create(Team)){
+			NavigationManager.NavigateTo("/admin/teams");
+		}
+		else
+		{
+			
+		}
+	}
+
+
+
+
+}

@@ -1,0 +1,251 @@
+﻿@page "/admin/lesson-edit/{Alias}"
+@inject IFileUploader fileUploader
+@inject ILessonService LessonService
+@inject IBlogService BlogService
+@inject NavigationManager NavigationManager
+@using Metanet.Shared.DTO
+
+@if(Lesson != null)
+{
+	<!-- Card body START -->
+				<div class="card-body">
+					<!-- Step content START -->
+					<div class="bs-stepper-content">
+						
+
+							<!-- Step 1 content START -->
+							<div id="step-1" role="tabpanel" class="content show" aria-labelledby="steppertrigger1">
+								<!-- Title -->
+								<h4>Детали урока</h4>
+
+								<hr> <!-- Divider -->
+								<EditForm Model="Lesson" OnValidSubmit="Save">
+									<DataAnnotationsValidator></DataAnnotationsValidator>
+									<ValidationSummary></ValidationSummary>
+								<!-- Basic information START -->
+								<div class="row g-4">
+									<div class="col-12">
+										<label class="form-label">Наименование Блога *</label>
+										<InputSelect class="form-control" id="blog" @bind-Value="Lesson.BlogId">
+											<option>Не выбрано</option>
+												@if(Blogs != null)
+												{
+													@if(Blogs.Count > 0){
+														@foreach (var item in Blogs)
+																	{
+																		<option value="@item.Id">@item.Title</option>
+																	}
+													}
+												}
+							
+										</InputSelect>
+										<ValidationMessage For="()=>Lesson.BlogId"></ValidationMessage>
+									</div>
+									<!-- Course title -->
+									<div class="col-12">
+										<label class="form-label">Наименование урока *</label>
+										<InputText class="form-control" @bind-Value="Lesson.Title"></InputText>
+										<ValidationMessage For="()=>Lesson.Title"></ValidationMessage>
+									</div>
+									<div class="col-12">
+										<label class="form-label">Номер урока *</label>
+										<InputNumber class="form-control"  min="1" max="100" @bind-Value="Lesson.Number"></InputNumber>
+										<ValidationMessage For="()=>Lesson.Number"></ValidationMessage>
+									</div>
+									<div class="col-6">
+										<label class="form-label">Предыдущий урок</label>
+										<InputSelect class="form-control" id="blog" @bind-Value="Lesson.PrevLessonId">
+											<option value="">Не выбрано</option>
+												@if(Lessons != null)
+												{
+													@if(Lessons.Count > 0){
+														@foreach (var item in Lessons)
+														{
+														@if(item.BlogId == Lesson.BlogId && item.Id != Lesson.NextLessonId && item.Id != Id)
+														{
+															<option value="@item.Id">@item.Title</option>
+														}
+										
+														}
+													}
+												}
+							
+										</InputSelect>
+										<ValidationMessage For="()=>Lesson.PrevLessonId"></ValidationMessage>
+									</div>
+									<div class="col-6">
+										<label class="form-label">Следующий урок</label>
+										<InputSelect class="form-control" id="blog" @bind-Value="Lesson.NextLessonId">
+											<option value="">Не выбрано</option>
+												@if(Lessons != null)
+												{
+													@if(Lessons.Count > 0){
+														@foreach (var item in Lessons)
+														{
+														@if(item.BlogId == Lesson.BlogId && item.Id != Lesson.PrevLessonId && item.Id != Id)
+														{
+															<option value="@item.Id">@item.Title</option>
+														}
+										
+														}
+													}
+												}
+							
+										</InputSelect>
+										<ValidationMessage For="()=>Lesson.NextLessonId"></ValidationMessage>
+									</div>
+									<div class="col-12">
+										<label class="form-label">Описание урока </label>
+										<InputTextArea class="form-control"  @bind-Value="Lesson.Description"></InputTextArea>
+										<ValidationMessage For="()=>Lesson.Description"></ValidationMessage>
+									</div>
+									
+									
+
+
+									<div class="col-12">
+										@if(loading){
+											<Loading></Loading>
+										}
+									@if(!string.IsNullOrEmpty(Lesson.ImageUrl)){
+											<div class="card" style="width: 18rem;">
+											  <img class="card-img-top" src="@Lesson.ImageUrl" alt="Card image cap">
+											  <div class="card-body text-center">		
+												<a class="btn btn-danger" @onclick="DeleteFile">Удалить</a>
+											  </div>
+											</div>
+											}
+											
+										<label class="form-label">Изображение *</label>
+										<InputFile class="form-control" OnChange="UploadImage"></InputFile>
+										<ValidationMessage For="()=>Lesson.ImageUrl"></ValidationMessage>
+									</div>
+									
+									
+									<div class="col-12">
+									@if(!string.IsNullOrEmpty(Lesson.VideoUrl)){
+											<div class="card" style="width: 18rem;">
+											  <video width="320" height="240" controls>
+												  <source src="@Lesson.VideoUrl" type="video/mp4">
+												</video>
+											  <div class="card-body text-center">		
+												<a class="btn btn-danger" @onclick="DeleteVideo">Удалить</a>
+											  </div>
+											</div>
+											}
+											else{
+												<Loader loader=Loading></Loader>
+											}
+											
+										<label class="form-label">Видеоролик в формате mp4/до 2 гб *</label>
+										<InputFile class="form-control" OnChange="UploadVideo"></InputFile>
+										<ValidationMessage For="()=>Lesson.ImageUrl"></ValidationMessage>
+									</div>
+									
+
+
+									<!-- Step 1 button -->
+									<div class="d-flex justify-content-end mt-3">
+										<button class="btn btn-primary next-btn mb-0">Обновить</button>
+									</div>
+								</div>
+
+								</EditForm>
+								<!-- Basic information START -->
+							</div>
+							<!-- Step 1 content END -->
+					</div>
+				</div>
+				<!-- Card body END -->
+}
+else{
+	<Loader loader=true></Loader>
+}
+
+
+@code {
+	[Parameter]
+	public string Alias { get; set; }
+	LessonDTO Lesson;
+	int Id;
+	List<Blog> Blogs;
+	List<Lesson> Lessons;
+	bool Loading = false;
+	bool loading = false;
+	protected override async Task OnInitializedAsync()
+	{
+		Lesson = await LessonService.GetLessonByAlias(Alias);
+		if(Lesson == null){ NavigationManager.NavigateTo("/admin/lessons"); }
+		else
+		{
+			Id = Lesson.Id;
+			Blogs = await BlogService.GetAllBlogs();
+			Lessons = await LessonService.GetAllLesson();
+		}
+
+	}
+
+
+
+
+	public async Task UploadImage(InputFileChangeEventArgs e)
+	{
+		loading = true;
+		string[] resolved_format = { ".jpg", ".jpeg", ".png", ".bmp", ".gif" };
+		string oldUrl = Lesson.ImageUrl;
+		Lesson.ImageUrl = await fileUploader.UploadOneFile(e, resolved_format, 2000,oldUrl);
+		if (oldUrl != Lesson.ImageUrl)
+		{
+			await fileUploader.DeleteFile(oldUrl);
+		}
+		loading = false;
+		StateHasChanged();
+	}
+
+
+	public async Task UploadVideo(InputFileChangeEventArgs e)
+	{
+		Loading = true;
+		string[] resolved_format = { ".mp4" };
+		string oldVideoUrl = Lesson.VideoUrl;
+		Lesson.VideoUrl = await fileUploader.UploadOneFile(e, resolved_format, 1000,oldVideoUrl);
+		if (oldVideoUrl != Lesson.VideoUrl)
+		{
+			await fileUploader.DeleteFile(oldVideoUrl);
+		}
+		Loading = false;
+		StateHasChanged();
+	}
+
+
+	public async Task DeleteFile()
+	{
+		Lesson.ImageUrl = await fileUploader.DeleteFile(Lesson.ImageUrl);
+		StateHasChanged();
+	}
+
+	public async Task DeleteVideo()
+	{
+		Lesson.VideoUrl = await fileUploader.DeleteFile(Lesson.VideoUrl);
+		StateHasChanged();
+	}
+
+	
+
+
+
+	public async Task Save()
+	{
+		if(await LessonService.Update(Id,Lesson) != null){
+			NavigationManager.NavigateTo("/admin/lessons");
+		}
+		else
+		{
+			
+		}
+	}
+
+    
+
+}
+

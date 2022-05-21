@@ -1,0 +1,54 @@
+﻿@inject IJSRuntime JS
+
+@if(IsShow == true){
+<div class="container my-2 col-lg-4 col-md-6 col-sm-12 d-flex justify-content-center countdown-container">
+  <div class="jumbotron countdown show transparent-button-blue countdown-block" data-Date='@DateString'>
+  <div class="running">
+    <timer class="text-white date-timer">
+      <span class="days"></span>:<span class="hours"></span>:<span class="minutes"></span>:<span
+              class="seconds"></span>
+      </timer>
+      <div class="break"></div>
+      <div class="labels text-white timer-labels"><span>Дней</span><span>Часов</span><span>Минут</span><span>Секунд</span>
+      </div>
+      <div class="break"></div>
+  </div>
+
+  <div class="ended">
+  </div>
+</div>
+
+</div>
+}
+
+
+@code {
+    [Parameter]
+    public string? DateString { get; set; } = null;
+
+    public bool IsShow = false;
+
+    protected override void OnParametersSet()
+    {
+        if(!String.IsNullOrEmpty(DateString))
+        {
+            DateTime oDate = Convert.ToDateTime(DateString);
+            if(oDate > DateTime.Now)
+            {
+                IsShow = true;
+            }
+        }
+    }
+
+
+    
+
+    protected override  async Task OnAfterRenderAsync(bool render)
+    {
+        if (render)
+        {
+            await JS.InvokeVoidAsync("StartTimer");
+            StateHasChanged();
+        }   
+    }
+}

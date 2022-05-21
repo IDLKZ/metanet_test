@@ -1,0 +1,127 @@
+@page "/payment-info"
+@using Microsoft.AspNetCore.WebUtilities
+@using Metanet.Shared.Helpers
+@using System.Globalization
+@inject NavigationManager navigationManager
+@inject IPaymentService PaymentService
+
+<div class="min-vh-100 pt-120" style="padding-top: 200px">
+    <div class="container">
+        
+        <div class="row d-flex justify-content-center align-items-center">
+            <div class="col-md-8 text-center">
+                @if (status == 1 && original) //if Payment accepted
+                    {
+                        @if (transaction != null)
+                        {
+                            <div class="@(transaction.RES_CODE == 0 ? "jumbotron bg-success text-white" : "jumbotron bg-danger text-white")">
+                                
+                                    @if (transaction.RES_CODE == 0)
+                                    {
+                                        <h3 class="text-white">
+                                    Оплата произведена успешно!;
+                                    </h3>
+                                    }
+                                    else
+                                    {
+                                        <h3 class="text-white">
+                                            Что-то пошло не так! Код ошибки - @transaction.RES_CODE;
+                                            Попробуйте снова;
+                                        </h3>
+                                    }
+                                
+                                <div class="lead">
+                                    <p>Номер заказа: @transaction.ORDER</p>
+                                    <p>@transaction.RES_DESC</p>
+                                    
+                                </div>
+                                
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <Loader loader="true"></Loader>
+                    }
+                
+            </div>
+        </div>
+        
+    </div>
+    
+    
+    
+   
+
+</div>
+
+
+
+@code {
+    int status = 0;
+    bool original = false;
+    TransactionUpdateDTO transaction = new TransactionUpdateDTO();
+
+    List<string> accept = new List<string>()
+    {
+            "order","mpi_order","rrn","res_code","amount","currency","res_desc","sign"
+    };
+    protected override void OnInitialized()
+    {
+        var uri = navigationManager.ToAbsoluteUri(navigationManager.Uri);
+         var query = QueryHelpers.ParseQuery(uri.Query);
+
+        if (accept.All(key => query.ContainsKey(key)))
+        {
+            if(query.TryGetValue("order", out var order))
+            {
+                transaction.ORDER = Int32.Parse(order.ToString());
+            }
+            if(query.TryGetValue("mpi_order", out var mpi_order ))
+            {
+                transaction.MPI_ORDER = mpi_order;
+            }
+            if(query.TryGetValue("rrn", out var rrn ))
+            {
+                transaction.RRN = rrn;
+            }
+            if(query.TryGetValue("res_code", out var res_code ))
+            {
+                transaction.RES_CODE = Int32.Parse(res_code.ToString());
+            }
+            if(query.TryGetValue("amount", out var amount ))
+            {
+                transaction.AMOUNT = amount;
+            }
+            if(query.TryGetValue("currency", out var currency ))
+            {
+                transaction.CURRENCY = currency;
+            }
+            if(query.TryGetValue("res_desc", out var res_desc ))
+            {
+                transaction.RES_DESC = res_desc;
+            }
+            if(query.TryGetValue("sign", out var sign ))
+            {
+                transaction.P_SIGN = sign;
+            }
+            status = 1;
+            if (PaymentHelper.GetHashedString(PaymentHelper.GetStringAfterPayment(transaction)) == transaction.P_SIGN)
+            {
+                original = true;
+                PaymentService.UpdateTransaction(transaction);
+            }
+            else
+            {
+                navigationManager.NavigateTo("/404");
+            }
+        }
+        
+    }
+
+    
+
+
+
+}
+

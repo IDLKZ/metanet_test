@@ -1,0 +1,48 @@
+﻿@inherits LayoutComponentBase
+@using Metanet.Shared
+@inject NavigationManager Navigation
+<ToastContainer />
+<Navbar></Navbar>
+<section>
+	<AuthorizeView>
+		<Authorized>
+			<Loader loader=true></Loader>
+		</Authorized>
+		<NotAuthorized>
+			 @Body
+		</NotAuthorized>
+	</AuthorizeView>
+   
+</section>
+<Footer></Footer>
+
+@code {
+	[CascadingParameter]
+	private Task<AuthenticationState> AuthenticationStateTask { get; set; }
+
+	bool activeWrapper = false;
+
+	protected override async Task OnInitializedAsync()
+	{
+
+		var authenticationState = await AuthenticationStateTask;
+
+	
+		if(authenticationState?.User?.Identity != null || authenticationState.User.Identity.IsAuthenticated)
+		{
+			if (authenticationState.User.IsInRole(Constants.Admin))
+			{
+				Navigation.NavigateTo("/admin", true);
+			}
+			else if (authenticationState.User.IsInRole(Constants.Customer))
+			{
+				Navigation.NavigateTo("/customer", true);
+			}
+			
+		}
+
+	}
+
+
+
+}

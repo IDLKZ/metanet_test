@@ -1,0 +1,122 @@
+﻿@page "/admin/blog-edit/{Alias}"
+@inject IFileUploader fileUploader
+@inject IBlogService BlogService
+@inject ICourseService CourseService
+@inject NavigationManager NavigationManager
+@using Metanet.Shared.DTO
+@if (Blog != null)
+{
+	<!-- Card body START -->
+				<div class="card-body">
+					<!-- Step content START -->
+					<div class="bs-stepper-content">
+						
+
+							<!-- Step 1 content START -->
+							<div id="step-1" role="tabpanel" class="content show" aria-labelledby="steppertrigger1">
+								<!-- Title -->
+								<h4>Детали курса</h4>
+
+								<hr> <!-- Divider -->
+								<EditForm Model="Blog" OnValidSubmit="Save">
+									<DataAnnotationsValidator></DataAnnotationsValidator>
+								
+								<!-- Basic information START -->
+								<div class="row g-4">
+									<div class="col-12">
+										<label class="form-label">Наименование Курса</label>
+										<InputSelect class="form-control" id="course" @bind-Value="Blog.CourseId">
+											<option>Не выбрано</option>
+											@if(Courses != null)
+												{
+													@if(Courses.Count > 0){
+														@foreach (var item in Courses)
+																	{
+																		<option value="@item.Id">@item.Title</option>
+																	}
+													}
+												}
+										</InputSelect>
+										<ValidationMessage For="()=>Blog.CourseId"></ValidationMessage>
+									</div>
+									<!-- Course title -->
+									<div class="col-12">
+										<label class="form-label">Наименование блог курса</label>
+										<InputText class="form-control" @bind-Value="Blog.Title"></InputText>
+										<ValidationMessage For="()=>Blog.Title"></ValidationMessage>
+									</div>
+									
+									<div class="col-12">
+										<label class="form-label">Описание блок </label>
+										<InputTextArea class="form-control"  @bind-Value="Blog.Description"></InputTextArea>
+										<ValidationMessage For="()=>Blog.Description"></ValidationMessage>
+									</div>
+									<div class="col-6">
+										<label class="form-label">Дата начала</label>
+										<InputDate class="form-control"   @bind-Value="Blog.DateStart"></InputDate>
+										<ValidationMessage For="()=>Blog.DateStart"></ValidationMessage>
+									</div>
+									<div class="col-6">
+										<label class="form-label">Дата конца</label>
+										<InputDate class="form-control"   @bind-Value="Blog.DateEnd"></InputDate>
+										<ValidationMessage For="()=>Blog.DateEnd"></ValidationMessage>
+									</div>
+
+									<!-- Step 1 button -->
+									<div class="d-flex justify-content-end mt-3">
+										<button class="btn btn-primary next-btn mb-0">Обновить</button>
+									</div>
+								</div>
+
+								</EditForm>
+								<!-- Basic information START -->
+							</div>
+							<!-- Step 1 content END -->
+					</div>
+				</div>
+				<!-- Card body END -->
+}
+
+
+
+
+@code {
+	[Parameter]
+	public string Alias{ get; set; }
+
+	BlogDTO Blog;
+	List<Course> Courses;
+	int Id;
+	public async Task Save()
+	{
+		if(await BlogService.UpdateBlog(Id,Blog)){
+			NavigationManager.NavigateTo("/admin/blogs");
+		}
+		else
+		{
+
+		}
+	}
+
+	protected override async Task OnInitializedAsync()
+	{
+		Courses = await CourseService.GetAllCourses();
+		Blog = await BlogService.GetBlogByAlias(Alias);
+		if(Blog == null)
+		{
+			NavigationManager.NavigateTo("/admin/blogs");
+		}
+		else
+		{
+			Id = Blog.Id;
+		}
+		
+
+    }
+
+
+
+
+
+}
+

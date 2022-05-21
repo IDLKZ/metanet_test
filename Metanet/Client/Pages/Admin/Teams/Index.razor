@@ -1,0 +1,145 @@
+﻿@page "/admin/teams"
+@inject ITeamService TeamService
+@inject IFileUploader FileService
+@inject NavigationManager NavigationManager
+
+@if(Teams != null)
+{
+    @if(Teams.Count > 0)
+    {
+        	<!-- Title -->
+		<div class="row mb-3">
+			<div class="col-12 d-sm-flex justify-content-between align-items-center">
+				<h1 class="h3 mb-2 mb-sm-0">Состав команды <span class="badge bg-orange bg-opacity-10 text-orange">@Teams.Count</span></h1>
+				<NavLink href="admin/teams-create" class="btn btn-sm btn-primary mb-0">Создать</NavLink>
+			</div>
+		</div>
+
+		<!-- Card START -->
+		<div class="card bg-transparent border">
+
+			<!-- Card body START -->
+			<div class="card-body">
+				<!-- Course table START -->
+				<div class="table-responsive border-0 rounded-3">
+					<!-- Table START -->
+					<table class="table table-dark-gray align-middle p-4 mb-0 table-hover">
+						<!-- Table head -->
+						<thead>
+							<tr>
+								<th scope="col" class="border-0 rounded-start">Имя</th>
+								<th scope="col" class="border-0">Позиция</th>
+								<th scope="col" class="border-0">Инфо</th>
+								<th scope="col" class="border-0 rounded-end">Действия</th>
+							</tr>
+						</thead>
+
+						<!-- Table body START -->
+						<tbody>
+							@foreach(var item in Teams)
+							{
+								<tr>
+								<!-- Table data -->
+								<td>
+									<div class="d-flex align-items-center position-relative">
+										<!-- Image -->
+										<div class="w-60px">
+											<img src="@item.ImageUrl" class="rounded" alt="">
+										</div>
+										<!-- Title -->
+										<h6 class="mb-0 ms-2">	
+											<NavLink href="admin/courses" class="stretched-link">@item.Name</NavLink>
+										</h6>
+									</div>
+								</td>
+
+								<!-- Table data -->
+								<td>
+									<p>@item.Position</p>		
+								</td>
+
+								<!-- Table data -->
+								<td>
+									<p>@item.Info</p>		
+								</td>
+
+								
+								<td>
+									<div class="dropdown">
+									  <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										Действия
+									  </button>
+									  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+										<NavLink class="dropdown-item" href=@($"/admin/teams-edit/{item.Id}")>Изменить</NavLink>
+										<button class="dropdown-item text-danger" @onclick="()=>Delete(item.Id,item.ImageUrl)">Удалить</button>
+
+									  </div>
+									</div>
+								</td>
+
+								
+							</tr>
+							}
+							<!-- Table row -->
+							
+
+							
+
+						</tbody>
+						<!-- Table body END -->
+					</table>
+					<!-- Table END -->
+				</div>
+				<!-- Course table END -->
+			</div>
+			<!-- Card body END -->
+
+			<!-- Card footer START -->
+			
+			<!-- Card footer END -->
+		</div>
+		<!-- Card END -->
+		<!-- Page main content END -->
+    }
+    else
+    {
+        <div class="row mb-3">
+			<div class="col-12 d-sm-flex justify-content-between align-items-center">
+				<h1 class="h3 mb-2 mb-sm-0">Состав команды <span class="badge bg-orange bg-opacity-10 text-orange">0</span></h1>
+				<NavLink href="admin/teams-create" class="btn btn-sm btn-primary mb-0">Создать</NavLink>
+			</div>
+		</div>
+    }
+}
+else
+{
+    <Loader loader=true></Loader>
+}
+
+
+
+
+@code{
+	List<Team> Teams;
+
+	protected override async Task OnInitializedAsync()
+	{
+
+		Teams = await TeamService.GetAllTeams();
+	}
+
+
+	protected async Task Delete(int Id,string ImageUrl)
+	{
+		bool result = await TeamService.Delete(Id);
+		if (result)
+		{
+			FileService.DeleteFile(ImageUrl);
+			Teams =  await TeamService.GetAllTeams();
+		}
+	}
+
+
+
+
+}

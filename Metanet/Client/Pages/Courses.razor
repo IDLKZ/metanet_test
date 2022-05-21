@@ -1,0 +1,92 @@
+﻿@page "/courses/{Alias}"
+@inject NavigationManager navigationManager
+@inject IHomeService HomeService
+@if (Course != null)
+{
+    <section class="default-bg min-vh-100 pt-120">
+    <div class="container py-5 position-relative">
+        <FourthSvg></FourthSvg>
+        <div class="row text-center">
+            <h1 class="banner-text text-uppercase">@Course.Title</h1>
+        </div>
+            @if(Blogs != null)
+            {
+                    <div class="row py-5">
+                    @if(Blogs.Count > 0)
+                    {
+                        @foreach(var item in Blogs)
+                        {
+                            <div class="col-md-6 offset-md-3 my-4" @onclick="()=>Navigate(item.Alias,item.DateStart)">
+                                <div class=@($"course-blog {(DateTime.Now > item.DateStart ? "active-course-blog" : "not-active-course-blog")} px-3 py-3 d-flex align-items-center")>
+                                    <div>
+                                    <h4 class="text-white text-uppercase text-break">@item.Title</h4>
+                                    <ul>
+                                        <li class="text-white">
+                                            @if(item.Lessons != null)
+                                            {
+                                                   <p>@item.Lessons.Count() Видео уроков</p>  
+                                            }
+                                                else
+                                                {
+                                                   <p>0 Видео уроков</p>
+                                                }
+                                                </li>
+                                    </ul>
+                                    </div>    
+                                </div>
+                                @if(DateTime.Now < item.DateStart)
+                                {
+                                    <p class="text-white text-center fs-12 mb-0">блок будет доступен @item.DateStart.ToString("dd.MM.yyyy")</p>
+                                }
+                            </div>
+
+                            
+                        }
+                        
+                    }
+                    
+                </div> 
+            }
+           
+    </div>
+    
+
+
+</section>
+}
+else{
+    <Loader loader=true></Loader>
+}
+
+
+@code {
+    [Parameter]
+    public string Alias { get; set; }
+
+    Course Course;
+    List<Metanet.Shared.Models.Blog> Blogs;
+    protected override async Task OnInitializedAsync()
+    {
+
+        Course = await HomeService.GetCourseByAlias(Alias);
+        if(Course == null)
+        {
+            navigationManager.NavigateTo("/");
+        }
+        else
+        {
+            Blogs = await HomeService.GetBlogByCourseId(Course.Id);
+        }
+    }
+
+    void Navigate(string Alias, DateTime Start)
+    {
+        if(DateTime.Now > Start)
+        {
+            navigationManager.NavigateTo($"/blogs/{Alias}");
+        }
+    }
+
+
+
+}

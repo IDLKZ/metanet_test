@@ -1,0 +1,67 @@
+﻿@using Metanet.Shared
+@inherits LayoutComponentBase
+@inject NavigationManager Navigation
+@attribute [Authorize(Roles = "Admin")]
+	<ToastContainer />
+<AuthorizeView Roles="Admin">
+		<!-- **************** MAIN CONTENT START **************** -->
+<main>
+
+<!-- Sidebar START -->
+<AdminSidebar></AdminSidebar>
+<!-- Sidebar END -->
+
+<!-- Page content START -->
+<div class="page-content">
+	
+	<!-- Top bar START -->
+	<AdminBar></AdminBar>
+	<!-- Top bar END -->
+
+	<!-- Page main content START -->
+	<div class="page-content-wrapper border">
+
+		@Body
+	</div>
+	<!-- Page main content END -->
+</div>
+<!-- Page content END -->
+
+</main>
+<!-- **************** MAIN CONTENT END **************** -->
+		
+
+			
+
+          
+     </AuthorizeView>
+
+
+@code {
+	[CascadingParameter]
+	private Task<AuthenticationState> AuthenticationStateTask { get; set; }
+
+	bool activeWrapper = false;
+
+	protected override async Task OnInitializedAsync()
+	{
+
+		var authenticationState = await AuthenticationStateTask;
+
+		if (authenticationState?.User?.Identity is null || !authenticationState.User.Identity.IsAuthenticated)
+		{
+			Navigation.NavigateTo("/login", true);
+		}
+		else if(authenticationState?.User?.Identity != null || authenticationState.User.Identity.IsAuthenticated)
+		{
+			if (!authenticationState.User.IsInRole(Constants.Admin))
+			{
+				Navigation.NavigateTo("/", true);
+			}
+		}
+
+	}
+
+
+
+}

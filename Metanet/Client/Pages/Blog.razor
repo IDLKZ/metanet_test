@@ -1,0 +1,183 @@
+﻿@page "/blogs/{Alias}"
+@inject NavigationManager navigationManager
+@inject IHomeService HomeService
+@if(ready == true && Blogs != null)
+{
+    <section class="default-bg min-vh-100 pt-120">
+    <div class="container py-5 position-relative">
+        <ThirdSvg></ThirdSvg>
+        <div class="row text-center">
+                @if(Blogs.Course != null)
+                {
+                    <h1 class="banner-text text-uppercase">@Blogs.Title</h1>
+                }
+                
+        </div>
+
+        <div class="row py-5">
+            <div class="col-md-6 offset-md-3 my-4">
+                <div class="course-blog active-course-blog px-3 py-3 d-flex align-items-center">
+                    <div>
+                    <h4 class="text-white text-uppercase text-break">@Blogs.Title</h4>
+                    <ul>
+                        <li class="text-white">
+                          @if(Blogs.Lessons != null)
+                          {
+                            <p>@Blogs.Lessons.Count() Видео уроков</p>  
+                          }
+                          else
+                          {
+                              <p>0 Видео уроков</p>
+                          }
+                       </li>
+                    </ul>
+                    </div>
+                    
+                </div>
+            </div>  
+        </div>
+        <div class ="row mt-4">
+                @if(Lessons != null)
+                {
+                    @foreach(var item in Lessons)
+                    {
+                      <div class="col-md-12 my-2">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h4 class="text-white text-uppercase text-break cursor-pointer" @onclick="()=>Navigate(item.Alias)">@item.Title</h4>
+                            </div>
+                            <div class="col-md-6 cursor-pointer" @onclick="()=>Navigate(item.Alias)">
+                                <p class="text-white fs-30 text-uppercase fw-bold absolute-text">@item.Number</p>
+                                <img src="materials/images/logo.png" width="50px" class="absolute-image" />
+                                <img src="@item.ImageUrl" width="100%" />
+                            </div>
+                            <div class="col-md-6">
+                                <ul class="nav nav-pills mb-3 my-2" id="pills-tab" role="tablist">
+                                  <li class="nav-item my-1">
+                                    <a class="nav-link tab-button  text-white active mx-1" id="pills-home-tab" data-toggle="pill" href="@($"#pills-home{@item.Id}")" role="tab" aria-controls="pills-home11" aria-selected="true">Описание</a>
+                                  </li>
+                                  @if(@item.Materials != null)
+                                        {
+                                            @if(item.Materials.Count > 0)
+                                            {
+                                               <li class="nav-item my-1">
+                                                    <a class="nav-link tab-button text-white mx-1" id="pills-profile-tab" data-toggle="pill" href="@($"#pills-profile{@item.Id}")" role="tab" aria-controls="pills-profile11" aria-selected="false">Доп. Материалы</a>
+                                               </li> 
+                                            }
+                                            
+                                        }
+                                  
+                         
+                                </ul>
+                                <div class="tab-content" id="pills-tabContent">
+                                  <div class="tab-pane text-white fade show active" id="@($"pills-home{@item.Id}")" role="tabpanel" aria-labelledby="pills-home-tab">
+                                        @item.Description
+                                  </div>
+                                        @if(@item.Materials != null)
+                                        {
+                                            @if(item.Materials.Count > 0)
+                                            {
+                                                <div class="tab-pane text-white fade" id="@($"pills-profile{@item.Id}")" role="tabpanel" aria-labelledby="pills-profile-tab">
+                                                     @foreach (var material in item.Materials)
+                                           {
+                                                       <a class="nav-link text-white" href="@material.File" download target = "_blank">@material.Title
+                                                       <i class="fas fa-download text-white"></i>
+                                                       </a>
+                                           }
+                                                </div> 
+                                            }
+                                            
+                                        }
+                                        
+                         
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    }
+                    
+                }
+                
+
+          @*  <div class="col-md-12 my-2">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h4 class="text-white text-uppercase text-break">2. Какие бывают криптовалюты</h4>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="text-white fs-30 text-uppercase fw-bold absolute-text">1</p>
+                        <img src="materials/images/logo_dark.png" width="50px" class="absolute-image not-active-image" />
+                        <img src="materials/images/course_bg2.png" width="100%" />
+                    </div>
+                    <div class="col-md-6">
+                        <ul class="nav nav-pills mb-3 my-2" id="pills-tab" role="tablist">
+                          <li class="nav-item my-1">
+                            <a class="nav-link tab-button  text-white active mx-1" id="pills-home-tab" data-toggle="pill" href="#pills-home2" role="tab" aria-controls="pills-home2" aria-selected="true">Описание</a>
+                          </li>
+                          <li class="nav-item my-1">
+                            <a class="nav-link tab-button text-white mx-1" id="pills-profile-tab" data-toggle="pill" href="#pills-profile2" role="tab" aria-controls="pills-profile2" aria-selected="false">Доп. Материалы</a>
+                          </li>
+                         
+                        </ul>
+                        <div class="tab-content" id="pills-tabContent">
+                          <div class="tab-pane text-white fade show active" id="pills-home2" role="tabpanel" aria-labelledby="pills-home-tab">
+                              1.Мы живем во время необычайно быстрого прогресса. Мир меняется каждый день, мы просто не можем 
+                          </div>
+                          <div class="tab-pane text-white fade" id="pills-profile2" role="tabpanel" aria-labelledby="pills-profile-tab">
+                              2.Мы живем во время необычайно быстрого прогресса. Мир меняется каждый день, мы просто не можем 
+                          </div>
+                         
+                        </div>
+                    </div>
+
+
+
+                </div>
+            </div>*@
+
+        </div>
+    </div>
+</section>
+}
+else{
+    <Loader loader=true></Loader>
+}
+@code {
+    [Parameter]
+    public string Alias { get; set; }
+
+    Metanet.Shared.Models.Blog Blogs;
+    List<Metanet.Shared.Models.Lesson> Lessons;
+    bool ready = false;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        Blogs = await HomeService.GetBlogByAlias(Alias);
+        if(Blogs == null)
+        {
+            navigationManager.NavigateTo("/");
+        }
+        else
+        {
+            if(DateTime.Now < Blogs.DateStart)
+            {
+                navigationManager.NavigateTo("/");
+            }
+            else
+            {
+                Lessons = await HomeService.GetLessonByBlogId(Blogs.Id);
+                ready = true;
+            }
+        }
+    }
+
+    void Navigate(string Alias)
+    {
+        navigationManager.NavigateTo($"/lesson/{Alias}");
+    }
+
+
+
+}

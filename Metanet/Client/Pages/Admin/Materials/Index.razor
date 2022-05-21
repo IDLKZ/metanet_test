@@ -1,0 +1,337 @@
+﻿@page "/admin/materials/{Id:int}"
+@inject ILessonService LessonService
+@inject IMaterialService MaterialService
+@inject NavigationManager NavigationManager
+@inject IFileUploader FileUploader;
+@if (Lesson != null)
+{
+	<!-- Create START -->
+    <div class="card-body">
+					<!-- Step content START -->
+					<div class="bs-stepper-content">
+						
+
+							<!-- Step 1 content START -->
+							<div id="step-1" role="tabpanel" class="content show" aria-labelledby="steppertrigger1">
+								<!-- Title -->
+								<h4>Новый материал урока</h4>
+
+								<hr> <!-- Divider -->
+								<EditForm Model="MaterialCreate" OnValidSubmit="Save">
+									<DataAnnotationsValidator></DataAnnotationsValidator>
+									<ValidationSummary></ValidationSummary>
+								
+								<!-- Basic information START -->
+								<div class="row g-4">
+									<!-- Course title -->
+									<div class="col-6">
+										<label class="form-label">Наименование файла</label>
+										<InputText class="form-control" @bind-Value="MaterialCreate.Title"></InputText>
+										<ValidationMessage For="()=>MaterialCreate.Title"></ValidationMessage>
+									</div>
+
+									<div class="col-6">
+										<label class="form-label">Урок</label>
+										<InputSelect class="form-control" id="blog" @bind-Value="MaterialCreate.LessonId">		
+												@if(Lesson != null)
+												{
+													<option value="@Lesson.Id">@Lesson.Title</option>
+													
+												}
+										</InputSelect>
+										<ValidationMessage For="()=>MaterialCreate.LessonId"></ValidationMessage>
+									</div>
+									
+									<div class="col-12">
+									@if(!string.IsNullOrEmpty(MaterialCreate.File)){
+											<div class="card" style="width: 18rem;">
+											  <a href="@MaterialCreate.File" target ="_blank" download>@MaterialCreate.File</a>
+											  <div class="card-body text-center">		
+												<button class="btn btn-danger" @onclick="()=>DeleteFile(MaterialCreate.File)">Удалить</button>
+											  </div>
+											</div>
+											}
+											
+										<label class="form-label">Файл</label>
+										<InputFile class="form-control" OnChange="UploadFile"></InputFile>
+										<ValidationMessage For="()=>MaterialCreate.File"></ValidationMessage>
+									</div>
+
+
+									<!-- Step 1 button -->
+									<div class="d-flex justify-content-end mt-3">
+										<button class="btn btn-primary next-btn mb-0">Сохранить</button>
+									</div>
+								</div>
+
+								</EditForm>
+								<!-- Basic information START -->
+							</div>
+							<!-- Step 1 content END -->
+					</div>
+	</div>
+	<!-- Create END -->
+	@if(MaterialUpdate != null)
+	{
+		 <div class="card-body">
+					<!-- Step content START -->
+					<div class="bs-stepper-content">
+						
+
+							<!-- Step 1 content START -->
+							<div id="step-1" role="tabpanel" class="content show" aria-labelledby="steppertrigger1">
+								<!-- Title -->
+								<h4>Изменить материал @MaterialUpdate.Title </h4>
+
+								<hr> <!-- Divider -->
+								<EditForm Model="MaterialUpdate" OnValidSubmit="Update">
+									<DataAnnotationsValidator></DataAnnotationsValidator>
+									<ValidationSummary></ValidationSummary>
+								
+								<!-- Basic information START -->
+								<div class="row g-4">
+									<!-- Course title -->
+									<div class="col-6">
+										<label class="form-label">Наименование файла</label>
+										<InputText class="form-control" @bind-Value="MaterialUpdate.Title"></InputText>
+										<ValidationMessage For="()=>MaterialUpdate.Title"></ValidationMessage>
+									</div>
+
+									<div class="col-6">
+										<label class="form-label">Урок</label>
+										<InputSelect class="form-control" id="blog" @bind-Value="MaterialUpdate.LessonId">		
+												@if(Lesson != null)
+												{
+													<option value="@Lesson.Id">@Lesson.Title</option>
+													
+												}
+										</InputSelect>
+										<ValidationMessage For="()=>MaterialUpdate.LessonId"></ValidationMessage>
+									</div>
+									
+									<div class="col-12">
+									@if(!string.IsNullOrEmpty(MaterialUpdate.File)){
+											<div class="card" style="width: 18rem;">
+											  <a href="@MaterialUpdate.File" target ="_blank" download>@MaterialUpdate.File</a>
+											  <div class="card-body text-center">		
+												<button class="btn btn-danger" @onclick="()=>DeleteFile(MaterialUpdate.File)">Удалить</button>
+											  </div>
+											</div>
+											}
+											
+										<label class="form-label">Файл</label>
+										<InputFile class="form-control" OnChange="UpdateFile"></InputFile>
+										<ValidationMessage For="()=>MaterialUpdate.File"></ValidationMessage>
+									</div>
+
+
+									<!-- Step 1 button -->
+									<div class="d-flex justify-content-end mt-3">
+										<button class="btn btn-primary next-btn mb-0">Обновить</button>
+									</div>
+								</div>
+
+								</EditForm>
+								<!-- Basic information START -->
+							</div>
+							<!-- Step 1 content END -->
+					</div>
+	</div>
+	}
+	<!-- Edit START -->
+   
+	
+	<!-- Edit END -->
+
+	<!--List Of Materials-->
+	<!-- Card START -->
+	@if(Materials != null)
+	{
+		@if(Materials.Count > 0){
+			<div class="card bg-transparent border">
+
+			<!-- Card body START -->
+			<div class="card-body">
+				<!-- Course table START -->
+				<div class="table-responsive border-0 rounded-3">
+					<!-- Table START -->
+					<table class="table table-dark-gray align-middle p-4 mb-0 table-hover">
+						<!-- Table head -->
+						<thead>
+							<tr>
+								<th scope="col" class="border-0 rounded-start">Наименование файла</th>
+								<th scope="col" class="border-0">Ссылка</th>
+								<th scope="col" class="border-0 rounded-end">Действия</th>
+							</tr>
+						</thead>
+
+						<!-- Table body START -->
+						<tbody>
+							@foreach(var item in Materials)
+							{
+								<tr>
+								<!-- Table data -->
+								<td>
+									<div class="d-flex align-items-center position-relative">
+									
+										<!-- Title -->
+										<h6 class="mb-0 ms-2">	
+											<p>@item.Title</p>
+										</h6>
+									</div>
+								</td>
+
+								<!-- Table data -->
+								<td>
+										<a href="@item.File" download target="_blank">Скачать</a>
+												
+								</td>
+
+								<td>
+									<div class="dropdown">
+									  <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										Действия
+									  </button>
+									  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+										<button class="bg-transparent dropdown-item text-warning" @onclick="()=>GetItem(item.Id)">Изменить</button>
+										<button class="bg-transparent dropdown-item text-danger" @onclick="()=>Delete(item.Id,item.File)">Удалить</button>
+									  </div>
+									</div>
+								</td>
+
+								
+							</tr>
+							}
+							<!-- Table row -->
+						</tbody>
+						<!-- Table body END -->
+					</table>
+					<!-- Table END -->
+				</div>
+				<!-- Course table END -->
+			</div>
+			<!-- Card body END -->
+
+			<!-- Card footer START -->
+			
+			<!-- Card footer END -->
+		</div>
+		}
+	}
+	
+
+}
+else
+{
+    <Loader loader=true></Loader>  
+}
+
+@code {
+
+	[Parameter]
+	public int Id { get; set;}
+
+	Lesson Lesson;
+	MaterialCreateDTO MaterialCreate = new MaterialCreateDTO();
+	MaterialDTO MaterialUpdate;
+	int id;
+	List<Material> Materials;
+
+	protected async override Task OnInitializedAsync()
+	{
+		Lesson = await LessonService.GetLesson(Id);
+		if (Lesson == null)
+		{
+			NavigationManager.NavigateTo("/admin/lessons");
+		}
+		else
+		{
+			UpdateMaterials();
+		}
+	}
+
+
+	public async Task UploadFile(InputFileChangeEventArgs e)
+	{
+
+		string[] resolved_format = {};
+		string oldUrl = MaterialCreate.File;
+		MaterialCreate.File = await FileUploader.UploadOneFile(e, resolved_format, 100,oldUrl);
+		if (oldUrl != MaterialCreate.File)
+		{
+			await FileUploader.DeleteFile(oldUrl);
+		}
+
+		StateHasChanged();
+	}
+
+	public async Task  UpdateFile(InputFileChangeEventArgs e)
+	{
+
+		string[] resolved_format = {};
+		string oldUrl = MaterialUpdate.File;
+		MaterialUpdate.File = await FileUploader.UploadOneFile(e, resolved_format, 100,oldUrl);
+		if (oldUrl != MaterialUpdate.File)
+		{
+			await FileUploader.DeleteFile(oldUrl);
+		}
+
+		StateHasChanged();
+	}
+
+	public async Task DeleteFile(string ImageUrl)
+	{
+		ImageUrl = await FileUploader.DeleteFile(ImageUrl);
+		StateHasChanged();
+	}
+
+	async void UpdateMaterials()
+	{
+		Materials = await MaterialService.GetMaterialsByLessonId(Lesson.Id);
+		StateHasChanged();
+	}
+
+
+	public async Task Save(){
+		var result =  await MaterialService.Create(MaterialCreate);
+		if(result != false)
+		{
+			MaterialCreate = new MaterialCreateDTO();
+			UpdateMaterials();
+		}
+	}
+
+	public async Task Update(){
+		var result =  await MaterialService.Update(id,MaterialUpdate);
+		if(result != false)
+		{
+			MaterialUpdate = null;
+			UpdateMaterials();
+		}
+	}
+
+
+
+
+	public async Task GetItem(int Id)
+	{
+		MaterialUpdate =  await MaterialService.Get(Id);
+		id = Id;
+		StateHasChanged();
+	}
+
+	public async Task Delete(int Id,string path)
+	{
+		var result =  await MaterialService.Delete(Id);
+		if(result != false)
+		{
+			await FileUploader.DeleteFile(path);
+			MaterialCreate = new MaterialCreateDTO();
+			UpdateMaterials();
+		}
+	}
+
+
+
+
+}

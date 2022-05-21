@@ -1,0 +1,145 @@
+﻿@page "/admin/courses"
+@inject ICourseService service;
+
+@if(Courses != null){
+    @if(Courses.Count > 0)
+    {
+
+
+		<!-- Title -->
+		<div class="row mb-3">
+			<div class="col-12 d-sm-flex justify-content-between align-items-center">
+				<h1 class="h3 mb-2 mb-sm-0">Курсы <span class="badge bg-orange bg-opacity-10 text-orange">@Courses.Count</span></h1>
+				
+			</div>
+		</div>
+
+		<!-- Card START -->
+		<div class="card bg-transparent border">
+
+			<!-- Card body START -->
+			<div class="card-body">
+				<!-- Course table START -->
+				<div class="table-responsive border-0 rounded-3">
+					<!-- Table START -->
+					<table class="table table-dark-gray align-middle p-4 mb-0 table-hover">
+						<!-- Table head -->
+						<thead>
+							<tr>
+								<th scope="col" class="border-0 rounded-start">Наименование курса</th>
+								<th scope="col" class="border-0">Ссылка</th>
+								<th scope="col" class="border-0">Стоимость</th>
+								<th scope="col" class="border-0">Кол-во блоков</th>
+								<th scope="col" class="border-0">Описание</th>
+								<th scope="col" class="border-0">Дата начала</th>
+								<th scope="col" class="border-0">Дата окончания</th>
+								<th scope="col" class="border-0 rounded-end">Действия</th>
+							</tr>
+						</thead>
+
+						<!-- Table body START -->
+						<tbody>
+							@foreach(var item in Courses)
+							{
+								<tr>
+								<!-- Table data -->
+								<td>
+									<div class="d-flex align-items-center position-relative">
+										<!-- Image -->
+										<div class="w-60px">
+											<img src="@item.ImageUrl" class="rounded" alt="">
+										</div>
+										<!-- Title -->
+										<h6 class="mb-0 ms-2">	
+											<NavLink href="admin/courses" class="stretched-link">@item.Title</NavLink>
+										</h6>
+									</div>
+								</td>
+
+								<!-- Table data -->
+								<td>
+									<p>@item.Alias</p>		
+								</td>
+
+								<!-- Table data -->
+								<td>
+									<p>@item.Price KZT</p>		
+								</td>
+
+								<td>
+										@if(item.Blog != null)
+										{
+											<p>@item.Blog.Count</p>
+										}
+										else
+										{
+											<p>0</p>
+										}
+								</td>
+								<td>
+									@item.Description
+								</td>
+								<td>@item.DateStart</td>
+								<td>@item.DateEnd</td>
+								<td>
+									<div class="dropdown">
+									  <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										Действия
+									  </button>
+									  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+										<NavLink class="dropdown-item" href=@($"/admin/course-edit/{item.Alias}")>Изменить</NavLink>
+										<a class="dropdown-item" href="#">Список учеников</a>
+									  </div>
+									</div>
+								</td>
+
+								
+							</tr>
+							}
+							<!-- Table row -->
+							
+
+							
+
+						</tbody>
+						<!-- Table body END -->
+					</table>
+					<!-- Table END -->
+				</div>
+				<!-- Course table END -->
+			</div>
+			<!-- Card body END -->
+
+			<!-- Card footer START -->
+			
+			<!-- Card footer END -->
+		</div>
+		<!-- Card END -->
+		<!-- Page main content END -->
+	}
+	else
+	{
+		<div class="row mb-3">
+			<div class="col-12 d-sm-flex justify-content-between align-items-center">
+				<h1 class="h3 mb-2 mb-sm-0">Курсы <span class="badge bg-orange bg-opacity-10 text-orange">@Courses.Count</span></h1>
+				<NavLink href="admin/course-create" class="btn btn-sm btn-primary mb-0">Создать курс</NavLink>
+			</div>
+		</div>
+		
+	}
+}
+else{
+	<Loader loader=true></Loader>
+}
+
+
+
+@code {
+    List<Course> Courses;
+    protected override async Task OnInitializedAsync()
+    {
+        Courses = await service.GetAllCourses();
+    }
+
+
+}

@@ -1,0 +1,155 @@
+﻿@inject IHomeService HomeService
+<section class="position-fixed w-100" style="z-index:10000;height:110px;background:#111111">
+<section class="navbar-bg w-100" style="z-index:10000;">
+    <div class="container">
+           <nav class="navbar navbar-expand-lg navbar-dark">
+  <NavLink class="navbar-brand" href="/">
+      <img src="materials/images/logo.png" />
+  </NavLink>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse justify-content-md-center" id="navbarSupportedContent" style="z-index:1000">
+    <ul class="navbar-nav" style=" margin-top:-1px;">
+      <li class="nav-item dark-nav-link active ">
+        <NavLink class="nav-link text-uppercase text-white " href="/">главная</NavLink>
+      </li>
+        @if(course != null)
+       {
+         <li class="nav-item dark-nav-link">
+         <NavLink class="nav-link text-uppercase text-white" href="@($"/courses/{course.Alias}")">курсы</NavLink>
+        </li>  
+        }
+                    
+      <li class="nav-item active dark-nav-link"> 
+        <NavLink class="nav-link text-uppercase text-white " href="#">состав</NavLink>
+      </li>
+      <li class="nav-item dark-nav-link">
+         <NavLink class="nav-link text-uppercase text-white" href="#">контакты</NavLink>
+      </li>
+      <li class="nav-item dropdown dark-nav-link">
+        <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Личный кабинет
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <AuthorizeView Roles="Admin">
+                <NavLink class="dropdown-item text-uppercase" href="/">Привет, @context.User.Identity.Name</NavLink>
+                <NavLink class="dropdown-item text-uppercase" href="/admin">Панель управления</NavLink>
+                <NavLink class="dropdown-item text-uppercase" href="/logout">Выход</NavLink>
+            </AuthorizeView>
+            <AuthorizeView Roles="Customer">
+                <NavLink class="dropdown-item text-uppercase" href="/">Привет, @context.User.Identity.Name</NavLink>
+                <NavLink class="dropdown-item text-uppercase" href="/customer">Профиль</NavLink>
+                <NavLink class="dropdown-item text-uppercase" href="/logout">Выход</NavLink>
+            </AuthorizeView>
+             <AuthorizeView>
+                 <NotAuthorized>
+                     <NavLink class="dropdown-item text-uppercase" href="/login">Вход</NavLink>
+                    <NavLink class="dropdown-item text-uppercase" href="/register">Регистрация</NavLink>
+                 </NotAuthorized>
+            </AuthorizeView>
+          
+        
+        </div>
+      </li>
+    </ul>
+  </div>
+</nav>
+    </div>
+      
+</section>
+</section>
+@if(currencyDTO != null && currencyDTO.success == true)
+{
+    <div class="container-fluid position-fixed" style="top:110px; z-index:1000">
+    <div class="row d-flex justify-content-center">
+         <div class="marquee col-md-6">
+  <div class="track">
+    <div class="content py-0">
+       @if(currencyDTO.rates != null){
+                            @if(currencyDTO.rates.EUR > 0)
+                            {
+                                <span class="mx-2">
+                                 <span class="text-white pb-0">USD/EUR - </span>
+                                 <span class="text-white pb-0">@currencyDTO.rates.EUR</span>
+                                 </span>
+
+                            }
+                            @if(currencyDTO.rates.KZT > 0)
+                            {
+                                <span class="mx-2">
+                                 <span class="text-white pb-0">USD/KZT - </span>
+                                 <span class="text-white pb-0">@currencyDTO.rates.KZT</span>
+                                 </span>
+
+                            }
+                            @if(currencyDTO.rates.RUB > 0)
+                            {
+                                <span class="mx-2">
+                                  <span class="text-white pb-0">USD/RUB - </span>
+                                 <span class="text-white pb-0">@currencyDTO.rates.RUB</span>
+                                 </span>
+                            }
+
+                            @if(currencyDTO.rates.ETH > 0)
+                            {
+                                <span class="mx-2">
+                                  <span class="text-white pb-0">USD/ETH - </span>
+                                 <span class="text-white pb-0">@currencyDTO.rates.ETH</span>
+                                 </span>
+                            }
+                           @if(currencyDTO.rates.XRP > 0)
+                            {
+                                <span class="mx-2">
+                                  <span class="text-white pb-0">USD/XRP - </span>
+                                 <span class="text-white pb-0">@currencyDTO.rates.XRP</span>
+                                 </span>
+                            }
+                            @if(currencyDTO.rates.DOGE > 0)
+                            {
+                                <span class="mx-2">
+                                  <span class="text-white pb-0">USD/DOGE - </span>
+                                 <span class="text-white pb-0">@currencyDTO.rates.DOGE</span>
+                                 </span>
+                            }
+                            @if(currencyDTO.rates.BSC > 0)
+                            {
+                                <span class="mx-2">
+                                  <span class="text-white pb-0">USD/BSC - </span>
+                                 <span class="text-white pb-0">@currencyDTO.rates.BSC</span>
+                                 </span>
+                            }
+                              @if(currencyDTO.rates.AVA > 0)
+                            {
+                                <span class="mx-2">
+                                  <span class="text-white pb-0">USD/AVA - </span>
+                                 <span class="text-white pb-0">@currencyDTO.rates.AVA</span>
+                                 </span>
+                            }
+
+
+                    }
+
+                  
+    </div>
+  </div>
+</div> 
+    </div>
+    </div>
+
+  }
+
+
+
+
+@code {
+    Course course;
+    CurrencyDTO currencyDTO;
+
+    protected override async Task OnInitializedAsync()
+    {      
+        course = await HomeService.Course();
+        currencyDTO = await HomeService.GetCurrency();
+    }
+}

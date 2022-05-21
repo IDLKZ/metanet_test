@@ -1,0 +1,69 @@
+﻿<nav class="navbar sidebar navbar-expand-xl navbar-dark bg-dark">
+
+	<!-- Navbar brand for xl START -->
+	<div class="d-flex align-items-center">
+		<a class="navbar-brand" href="/">
+			<img class="navbar-brand-item" src="materials/images/logo.png" alt="">
+		</a>
+	</div>
+	<!-- Navbar brand for xl END -->
+	
+	<div class="offcanvas offcanvas-start flex-row custom-scrollbar overflow-scroll" data-bs-backdrop="true" tabindex="-1" id="offcanvasSidebar">
+		<div class="offcanvas-body sidebar-content d-flex flex-column bg-dark">
+
+			<!-- Sidebar menu START -->
+			<ul class="navbar-nav flex-column" id="navbar-sidebar">
+				
+				<!-- Menu item 1 -->
+				<li class="nav-item"><NavLink href="/" class="nav-link"><i class="fas fa-home fa-fw me-2"></i>Главная</NavLink></li>
+				<li class="nav-item"><NavLink href="/admin" class="nav-link"><i class="fas fa-home fa-fw me-2"></i>Панель управления</NavLink></li>
+				
+				<li class="nav-item ms-2 my-2">Пользователи</li>
+				<li class="nav-item"> 
+					<NavLink class="nav-link" href="/admin/users"><i class="fas fa-users fa-fw me-2"></i>Пользователи</NavLink>
+				</li>
+
+				<li class="nav-item ms-2 my-2">Рассылки</li>
+				<li class="nav-item"> 
+					<NavLink class="nav-link" href="/admin/send-email"><i class="fas fa-envelope fa-fw me-2"></i>Рассылка email</NavLink>
+				</li>
+				
+
+				<!-- Title -->
+				<li class="nav-item ms-2 my-2">Управление</li>
+				
+				
+
+				<!-- Menu item 3 -->
+				<li class="nav-item"> 
+					<NavLink class="nav-link" href="/admin/courses"><i class="fas fa-book fa-fw me-2"></i>Курсы</NavLink>
+				</li>
+				<li class="nav-item"> 
+					<NavLink class="nav-link" href="/admin/blogs"><i class="fas fa-boxes fa-fw me-2"></i>Блоки</NavLink>
+				</li>
+
+				<li class="nav-item"> 
+					<NavLink class="nav-link" href="/admin/lessons"><i class="fas fa-video fa-fw me-2"></i>Уроки</NavLink>
+				</li>
+
+				<li class="nav-item"> 
+					<NavLink class="nav-link" href="/admin/teams"><i class="fas fa-building fa-fw me-2"></i>Состав</NavLink>
+				</li>
+
+				<!-- Title -->
+				<li class="nav-item ms-2 my-2">Рассылки</li>
+
+				<li class="nav-item"> 
+					<NavLink class="nav-link" href="/logout"><i class="fas fa-power-off fa-fw me-2"></i>Выход</NavLink>
+				</li>
+
+			</ul>
+			<!-- Sidebar menu end -->
+			
+
+		</div>
+	</div>
+</nav>
+@code {
+
+}

@@ -1,0 +1,131 @@
+@page "/customer/edit/{userId}"
+@using System.Security.Claims
+@inject IFileUploader FileUploader
+@inject IUserService UserService
+@inject IToaster Toaster
+@inject NavigationManager NavigationManager;
+
+<div class="card bg-transparent border rounded-3">
+					<!-- Card header -->
+					<div class="card-header bg-transparent border-bottom">
+						<h3 class="card-header-title mb-0">Edit Profile</h3>
+					</div>
+					<!-- Card body START -->
+					<div class="card-body">
+						<!-- Form -->
+						<EditForm class="row g-4" Model="@User" OnValidSubmit="Save">
+							<DataAnnotationsValidator/>
+							<!-- Profile picture -->
+							<div class="col-12 justify-content-center align-items-center">
+								@if (!string.IsNullOrEmpty(User.ImageUrl))
+								{
+									<label class="form-label">Profile picture</label>
+									<div class="d-flex align-items-center">
+										<label class="position-relative me-4" for="uploadfile-1" title="Replace this pic">
+											<!-- Avatar place holder -->
+											<span class="avatar avatar-xl">
+												<img id="uploadfile-1-preview" class="avatar-img rounded-circle border border-white border-3 shadow" src="@User.ImageUrl" alt="">
+											</span>
+											<!-- Remove btn -->
+											<button type="button" class="uploadremove" @onclick="DeleteFile">
+												<i class="bi bi-x text-white"></i>
+											</button>
+										</label>
+									</div>
+								}
+								<!-- Upload button -->
+								<label class="btn btn-primary-soft mb-0" for="uploadfile-1">Загрузить изображение</label>
+								<InputFile id="uploadfile-1" class="form-control d-none" OnChange="UploadFile"/>
+								<ValidationMessage For="() => User.ImageUrl"></ValidationMessage>
+							</div>
+
+							<div class="col-12">
+								<label class="form-label">Логин пользователя</label>
+								<InputText class="form-control" @bind-Value="User.UserName"></InputText>
+								<ValidationMessage For="() => User.UserName"></ValidationMessage>
+							</div>
+							<div class="col-12">
+								<label class="form-label">Имя пользователя</label>
+								<InputText class="form-control" @bind-Value="User.Name"></InputText>
+								<ValidationMessage For="() => User.Name"></ValidationMessage>
+							</div>
+							<div class="col-12">
+								<label class="form-label">Почта пользователя</label>
+								<InputText readonly type="email" class="form-control" @bind-Value="User.Email"></InputText>
+								<ValidationMessage For="() => User.Email"></ValidationMessage>
+							</div>
+							<div class="col-12">
+								<label class="form-label">Номер пользователя</label>
+								<InputText placeholder="+77" class="form-control" @bind-Value="User.PhoneNumber"></InputText>
+								<ValidationMessage For="() => User.PhoneNumber"></ValidationMessage>
+							</div>
+							<div class="col-12">
+								<label class="form-label">Описание пользоватаеля(необязательно) </label>
+								<InputTextArea class="form-control" @bind-Value="User.Description"></InputTextArea>
+								<ValidationMessage For="() => User.Description"></ValidationMessage>
+							</div>
+
+							<div class="col-12">
+								<label class="form-label"> Новый Пароль пользователя(необязательно)</label>
+								<InputText type="password" class="form-control" @bind-Value="User.Password"></InputText>
+								<ValidationMessage For="() => User.Password"></ValidationMessage>
+							</div>
+
+							<div class="col-12">
+								<label class="form-label">Повторите новый пароль пользователя(необязательно)</label>
+								<InputText type="password" class="form-control" @bind-Value="User.ConfirmPassword"></InputText>
+								<ValidationMessage For="() => User.ConfirmPassword"></ValidationMessage>
+							</div>
+
+							<!-- Save button -->
+							<div class="d-sm-flex justify-content-end">
+								<button type="submit" class="btn btn-primary mb-0">Save changes</button>
+							</div>
+						</EditForm>
+					</div>
+					<!-- Card body END -->
+				</div>
+
+@code {
+	[Parameter]
+	public string userId { get; set; }
+	UserUpdateDTO User = new UserUpdateDTO();
+
+	protected override async Task OnInitializedAsync()
+	{
+		User = await UserService.GetForUpdate(userId);
+		
+		if(User == null)
+		{
+			Toaster.Warning("Пользователь не найден");
+			NavigationManager.NavigateTo("/customer");
+		}
+	}
+	
+	public async Task UploadFile(InputFileChangeEventArgs e)
+	{
+		string[] resolved_format = { ".jpg", ".jpeg", ".png", ".bmp", ".gif" };
+		string oldUrl = User.ImageUrl;
+		User.ImageUrl = await FileUploader.UploadOneFile(e, resolved_format, 20,oldUrl);
+		if (oldUrl != User.ImageUrl)
+		{
+			await FileUploader.DeleteFile(oldUrl);
+		}
+		StateHasChanged();
+
+	}
+	public async Task DeleteFile()
+	{
+		User.ImageUrl = await FileUploader.DeleteFile(User.ImageUrl);
+		StateHasChanged();
+	}
+	
+	public async Task Save()
+	{
+		var result = await UserService.Update(userId,User);
+			if (result)
+			{
+				NavigationManager.NavigateTo("/customer");
+			}
+	}
+}

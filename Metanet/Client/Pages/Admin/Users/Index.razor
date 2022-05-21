@@ -1,0 +1,241 @@
+﻿@page "/admin/users/{page:int}"
+@page "/admin/users"
+@inject IUserService UserService
+@inject Blazored.LocalStorage.ISyncLocalStorageService localStorage
+@inject IFileUploader FileUploader
+
+@if(Users != null){
+	
+		<!-- Title -->
+		<div class="row mb-3">
+			<div class="col-12 d-sm-flex justify-content-between align-items-center">
+				<h1 class="h3 mb-2 mb-sm-0">Пользователи платформы <span class="badge bg-orange bg-opacity-10 text-orange">@Users.ItemCount</span></h1>
+				<NavLink href="admin/user-create" class="btn btn-sm btn-primary mb-0">Создать пользователя</NavLink>
+			</div>
+			<div class="col-md-12 my-2">
+				
+				
+						<div class="rounded position-relative">
+							<input @bind="Search" class="form-control bg-transparent" type="search" placeholder="Поиск по имени, логину, почте или телефоны" aria-label="Search"/>
+							<button class="btn bg-transparent px-2 py-0 position-absolute top-50 end-0 translate-middle-y" @onclick="OnSearch"><i class="fas fa-search fs-6 "></i></button>
+							
+				
+						</div>
+				
+			</div>
+			
+		</div>
+
+
+		<!-- Card START -->
+		<div class="card bg-transparent border">
+
+			<!-- Card body START -->
+			<div class="card-body">
+				<!-- Course table START -->
+				<div class="table-responsive border-0 rounded-3">
+					<!-- Table START -->
+					<table class="table table-dark-gray align-middle p-4 mb-0 table-hover">
+						<!-- Table head -->
+						<thead>
+							<tr>
+								<th scope="col" class="border-0 rounded-start">Имя</th>
+								<th scope="col" class="border-0 rounded-start">Роль</th>
+								<th scope="col" class="border-0">Почта</th>
+								<th scope="col" class="border-0">Телефон</th>
+								<th scope="col" class="border-0">Создан</th>
+								<th scope="col" class="border-0">Изменен</th>
+								<th scope="col" class="border-0 rounded-end">Действия</th>
+							</tr>
+						</thead>
+
+						<!-- Table body START -->
+						<tbody>
+							@foreach(var item in Users.Data)
+							{
+								<tr>
+								<!-- Table data -->
+								<td>
+									<div class="d-flex align-items-center position-relative">
+										<!-- Image -->
+										<div class="w-60px">
+											<img src="@item.ImageUrl" class="rounded" alt="">
+										</div>
+										<!-- Title -->
+										<h6 class="mb-0 ms-2">	
+											<NavLink href="" class="stretched-link">@item.UserName</NavLink>
+										</h6>
+									</div>
+								</td>
+
+								<!-- Table data -->
+								
+								<td>
+										@if(item.UserRoles != null)
+										{
+											@if(item.UserRoles.Count() > 0)
+											{
+												@foreach(var role in item.UserRoles)
+											   {
+												   @switch(@role.Role.Name){
+													   case "Admin":
+														<p>Админ</p>
+														break;
+														case "Customer":
+															<p>Клиент</p>
+															break;
+														default:
+															<p>Пользователь</p>
+															break;
+												   }
+												}
+											}
+											else
+											{
+												<p>-</p>
+											}
+										}
+										else
+											{
+												<p>-</p>
+											}	
+								</td>
+
+								<!-- Table data -->
+								<td>
+									<p>@item.Email</p>		
+								</td>
+
+								<td>
+										<p>@item.PhoneNumber</p>		
+								</td>
+								<td>
+									@item.CreatedAt?.ToString("dd/MM/yyyy HH:mm:ss")
+								</td>
+								<td>
+									@item.UpdatedAt?.ToString("dd/MM/yyyy HH:mm:ss")
+								</td>	
+								<td>
+									<div class="dropdown">
+									  <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										Действия
+									  </button>
+									  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+										<NavLink class="dropdown-item" href="@($"/admin/user-update/{item.Id}")">Изменить</NavLink>
+										
+										<button class="dropdown-item text-danger" @onclick="@(()=>Delete(@item.Id,@item.ImageUrl))">Удалить</button>
+									  </div>
+									</div>
+								</td>
+
+								
+							</tr>
+							}
+							<!-- Table row -->
+							
+
+							
+
+						</tbody>
+						<!-- Table body END -->
+					</table>
+					<!-- Table END -->
+				</div>
+				<!-- Course table END -->
+			</div>
+			
+				<div class="container">
+					<nav aria-label="Page navigation example">
+					  <ul class="pagination">
+							@foreach(int i in Enumerable.Range(1,Users.PageCount))
+							{
+								<li class="@(i == page ? "page-item active" : "page-item")"><NavLink class="page-link" href=@($"/admin/users/{i}")>@i</NavLink></li>
+							}
+					 </ul>
+					</nav>
+				</div>
+			
+			<!-- Card body END -->
+
+			<!-- Card footer START -->
+			
+			<!-- Card footer END -->
+		</div>
+		<!-- Card END -->
+		<!-- Page main content END -->
+	
+}
+else
+{
+	<Loader loader = "true"></Loader>
+}
+
+
+@code {
+	PaginationDTO<Metanet.Shared.DTO.UserDTO> Users;
+	[Parameter]
+	public int page { get; set; }
+	int showPage = 20;
+	string Search ="";
+
+	protected override async Task OnInitializedAsync()
+	{
+		var pageLocal  = localStorage.GetItem<int>("page");
+		if (pageLocal != null && pageLocal > 0)
+		{
+			page = pageLocal;
+		}
+		else{
+			page = page <= 0 ? 1 : page;
+		}
+		Users = await UserService.GetAllUsers(page,showPage,Search);
+	}
+
+	protected override async Task OnParametersSetAsync()
+	{
+		if (page > 0)
+		{
+			if(Users.Data.Count() == 0)
+			{
+				page = Users.LastPage;
+			}
+			localStorage.SetItem<int>("page", page);
+
+			Users = await UserService.GetAllUsers(page,showPage,Search);
+
+			StateHasChanged();
+		}
+
+	}
+
+	protected async Task Delete(string Id,string path)
+	{
+		bool result = await UserService.Delete(Id);
+		if (result)
+		{
+			FileUploader.DeleteFile(path);
+			Users = await UserService.GetAllUsers(page,showPage,Search);
+			StateHasChanged();
+		}
+
+	}
+
+	protected async Task OnSearch()
+	{
+		if (!string.IsNullOrEmpty(Search))
+		{
+			if(!string.IsNullOrEmpty(Search))
+			{
+				localStorage.SetItem<int>("page", 1);
+				Users = await UserService.GetAllUsers(1,showPage,Search);
+			StateHasChanged();
+			}
+			
+		}
+	}
+
+
+	
+
+
+}
