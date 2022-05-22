@@ -187,58 +187,68 @@ namespace Metanet.Server.Controllers
 
         //GET ALL TRANSACTION
         [HttpGet("{DateFrom}/{DateTo}")]
-        public async Task<ActionResult<ResultFromXml>> GetAllTransactions(string DateFrom, string DateTo)
+        public async Task<ActionResult<ServiceResponse<ResultFromXml.Result>>> GetAllTransactions(string DateFrom, string DateTo)
         {
-            string endPoint = "https://ecom.jysanbank.kz/ecom/api";
-            var client = new HttpClient();
-            var data = new[]
+            try
             {
-                new KeyValuePair<string, string>("MERCHANT", PaymentHelper.MID),
-                new KeyValuePair<string, string>("TERMINAL", PaymentHelper.TID),
-                new KeyValuePair<string, string>("DATE_FROM", DateFrom),
-                new KeyValuePair<string, string>("DATE_TO", DateTo),
-                new KeyValuePair<string, string>("P_SIGN", PaymentHelper.GetHashedString(PaymentHelper.GetStringForTransaction(DateTo,DateFrom))),
-                new KeyValuePair<string, string>("LANGUAGE", "ru"),
-            };
-            ResultFromXml.Result  scp = null;
-            var result =  await client.PostAsync(endPoint, new FormUrlEncodedContent(data));
-            XmlSerializer serializer = new XmlSerializer(typeof(ResultFromXml.Result));
-            using (Stream stream = result.Content.ReadAsStreamAsync().Result)
-            {
-                scp = (ResultFromXml.Result)serializer.Deserialize(stream);
-            }
+                string endPoint = "https://ecom.jysanbank.kz/ecom/api";
+                var client = new HttpClient();
+                var data = new[]
+                {
+                    new KeyValuePair<string, string>("MERCHANT", PaymentHelper.MID),
+                    new KeyValuePair<string, string>("TERMINAL", PaymentHelper.TID),
+                    new KeyValuePair<string, string>("DATE_FROM", DateFrom),
+                    new KeyValuePair<string, string>("DATE_TO", DateTo),
+                    new KeyValuePair<string, string>("P_SIGN",
+                        PaymentHelper.GetHashedString(PaymentHelper.GetStringForTransaction(DateTo, DateFrom))),
+                    new KeyValuePair<string, string>("LANGUAGE", "ru"),
+                };
+                ResultFromXml.Result scp = null;
+                var result = await client.PostAsync(endPoint, new FormUrlEncodedContent(data));
+                XmlSerializer serializer = new XmlSerializer(typeof(ResultFromXml.Result));
+                using (Stream stream = result.Content.ReadAsStreamAsync().Result)
+                {
+                    scp = (ResultFromXml.Result) serializer.Deserialize(stream);
+                }
 
-            return Ok(scp);
+                if (scp.Code == 0)
+                {
+                    return Ok(new ServiceResponse<ResultFromXml.Result>
+                    {
+                        Success = true,
+                        StatusCode = 200,
+                        Data = scp
+                    });
+                }
+                else
+                {
+                    return Ok(new ServiceResponse<ResultFromXml.Result>
+                    {
+                        Success = false,
+                        Message = "Данных нет",
+                        StatusCode = 400
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Ok(new ServiceResponse<ResultFromXml.Result>
+                {
+                        Success = false,
+                        Message = ex.Message,
+                        StatusCode = 400
+                });
+            }
+            
         }
         //Get SINGLE TRANSACTION
-        [HttpGet("{ORDER}")]
-        public async Task<ActionResult<ResultSingleXml>> GetTransaction(string ORDER)
-        {
-            string endPoint ="https://ecom.jysanbank.kz/ecom/api";
-            var client = new HttpClient();
-            var data = new[]
-            {
-                new KeyValuePair<string, string>("ORDER", ORDER),
-                new KeyValuePair<string, string>("MERCHANT", PaymentHelper.MID),
-                new KeyValuePair<string, string>("GETSTATUS", "1"),
-                new KeyValuePair<string, string>("P_SIGN", PaymentHelper.GetHashedString(PaymentHelper.GetStringForSingleTransaction(ORDER))),
-                new KeyValuePair<string, string>("LANGUAGE", "ru"),
-            };
-            ResultSingleXml.Result  scp = null;
-            var result =  await client.PostAsync(endPoint, new FormUrlEncodedContent(data));
-            XmlSerializer serializer = new XmlSerializer(typeof(ResultSingleXml.Result));
-            using (Stream stream = result.Content.ReadAsStreamAsync().Result)
-            {
-                scp = (ResultSingleXml.Result)serializer.Deserialize(stream);
-            }
-
-            return Ok(scp);
-        }
+         
+        
         
         //Get Transaction by search
 
         [HttpGet]
-        public async Task<ActionResult<ServiceResponse<PaginationDTO<Transaction>>>> GetAllTransaction([FromQuery] int page, int show = 5, string? search = "")
+        public async Task<ActionResult<ServiceResponse<PaginationDTO<Transaction>>>> GetAllLocalTransactions([FromQuery] int page, int show = 5, string? search = "")
         {
             var query = _dbContext.Transactions.Where(u=> EF.Functions.Like(u.ORDER, "%" + search + "%") || EF.Functions.Like(u.MPI_ORDER, "%" + search + "%") || EF.Functions.Like(u.RRN, "%" + search + "%") || EF.Functions.Like(u.AMOUNT, "%" + search + "%") || EF.Functions.Like(u.CURRENCY, "%" + search + "%")).Include(u => u.User).Include(c=>c.Course);
 
@@ -255,6 +265,42 @@ namespace Metanet.Server.Controllers
             
             return Ok(result);
         }
+        
+        
+        
+        [HttpGet("{ORDER}")]
+        public async Task<ActionResult<ServiceResponse<ResultSingleXml>>> GetTransaction(string ORDER)
+        {
+            string endPoint = "https://ecom.jysanbank.kz/ecom/api";
+            var client = new HttpClient();
+            var data = new[] {new KeyValuePair<string, string>("ORDER", ORDER), new KeyValuePair<string, string>("MERCHANT", PaymentHelper.MID), new KeyValuePair<string, string>("GETSTATUS", "1"), new KeyValuePair<string, string>("P_SIGN", PaymentHelper.GetHashedString(PaymentHelper.GetStringForSingleTransaction(ORDER))), new KeyValuePair<string, string>("LANGUAGE", "ru"),};
+            ResultSingleXml.Result scp = new ResultSingleXml.Result();
+            var result = await client.PostAsync(endPoint, new FormUrlEncodedContent(data));
+            XmlSerializer serializer = new XmlSerializer(typeof(ResultSingleXml.Result));
+            using (Stream stream = result.Content.ReadAsStreamAsync().Result)
+            {
+                scp = (ResultSingleXml.Result) serializer.Deserialize(stream);
+            }
+            if (scp.Code == 0)
+            {
+                return Ok(new ServiceResponse<ResultSingleXml.Result>()
+                {
+                    Success = true,
+                    StatusCode = 200,
+                    Data = scp
+                });
+            }
+            return Ok(new ServiceResponse<ResultSingleXml.Result>()
+            {
+                Success = false,
+                StatusCode = 404,
+                Message = "Не найдено",
+            });
+
+
+            
+        }
+
     }
     
     

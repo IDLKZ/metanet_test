@@ -10,4 +10,9 @@ public interface IPaymentService
     public Task<bool> CreateTransaction(TransactionCreateDTO transactionCreateDto);
     public Task<bool> UpdateTransaction(TransactionUpdateDTO transactionUpdateDto);
     public Task<ServiceResponse<bool>> HasSubscription(string UserId,int CourseId);
+    
+    public Task<ServiceResponse<ResultFromXml.Result>> GetAllTransactions(string Date_From, string Date_To);
+    public Task<PaginationDTO<Transaction>> GetAllLocalTransactions(int page, int show = 5, string? search = "");
+    public Task<ResultSingleXml.Result> GetSingleTransaction(string ORDER);
+
 }

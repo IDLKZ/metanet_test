@@ -1,0 +1,214 @@
+@page "/admin/global-transaction"
+@inject IJSRuntime JS
+@inject IPaymentService PaymentService;
+@inject IToaster toaster;
+@using BlazorDateRangePicker
+@using System.ComponentModel.DataAnnotations
+
+
+<div class="row mb-3">
+	<div class="col-12 d-sm-flex justify-content-between align-items-center">
+		<h1 class="h3 mb-2 mb-sm-0">Глобальные Транзакции</h1>
+				
+	</div>
+	<div class="col-md-8 my-2">
+		<div class="form-group">
+			<label for="date_to">Поиск даты с  @Date_From по @Date_To</label>
+			<DateRangePicker class="date_picker form-control"
+			                 MinDate="DateTimeOffset.Now.AddYears(-10)" 
+			                 MaxDate="DateTimeOffset.Now"
+			                 TimePicker="true"
+			                 TimePicker24Hour="true"
+			                 DateFormat="@($"dd.MM.yyyy HH:mm:ss")"
+			                 OnRangeSelect="@((DateRange range) => { Date_From = range.Start.ToString("dd.MM.yyyy HH:mm:ss");Date_To = range.End.ToString("dd.MM.yyyy HH:mm:ss");})"
+			/>
+		</div>
+	</div>
+	
+	
+	@if (!string.IsNullOrEmpty(Date_From) && !string.IsNullOrEmpty(Date_To))
+	{
+		<div class="col-md-4 my-2 d-flex justify-content-center align-center">
+			<div class="form-group mb-0">
+				<button class="btn btn-blue-soft mb-0" @onclick="AllTransactions">Поиск</button>
+			</div>
+		</div>
+	}
+</div>
+<hr/>
+@if (!loading)
+{
+	@if (Result != null)
+	{
+		@if (Result.Operations != null)
+		{
+			@if (Result.Operations.Rec.Count > 0)
+			{
+				<!-- Card START -->
+		<div class="card bg-transparent border">
+
+			<!-- Card body START -->
+			<div class="card-body">
+				<h2>Всего транзакций: @Result.Operations.Rec.Count</h2>
+				<!-- Course table START -->
+				<div class="table-responsive border-0 rounded-3">
+					<!-- Table START -->
+					<table class="table table-dark-gray align-middle p-4 mb-0 table-hover">
+						<!-- Table head -->
+						<thead>
+						<tr>
+							<th scope="col" class="border-0 rounded-start">Номер заказа</th>
+							<th scope="col" class="border-0">Уникальный номер заказа MPI</th>
+							<th scope="col" class="border-0">Текущий статус операции</th>
+							<th scope="col" class="border-0">Описание статуса операции</th>
+							<th scope="col" class="border-0">Сумма операции</th>
+							<th scope="col" class="border-0">Валюта операции</th>
+							<th scope="col" class="border-0 rounded-end">Терминал</th>
+							<th scope="col" class="border-0 rounded-end">Id клиента</th>
+							<th scope="col" class="border-0 rounded-end">Карта плательщика</th>
+							<th scope="col" class="border-0 rounded-end">Имя клиента на карте плательщика</th>
+							<th scope="col" class="border-0 rounded-end">Дата карты плательщика</th>
+							<th scope="col" class="border-0 rounded-end">Токен карты плательщика</th>
+							<th scope="col" class="border-0 rounded-end">Краткое описание операции</th>
+							<th scope="col" class="border-0 rounded-end">Полное описание операции</th>
+							<th scope="col" class="border-0 rounded-end">Email клиента</th>
+							<th scope="col" class="border-0 rounded-end">Язык клиента</th>
+							<th scope="col" class="border-0 rounded-end">Телефон клиента</th>
+							<th scope="col" class="border-0 rounded-end">Дата создания операции</th>
+							<th scope="col" class="border-0 rounded-end">Код результата операции MPI</th>
+							<th scope="col" class="border-0 rounded-end">Описание кода результата MPI</th>
+							<th scope="col" class="border-0 rounded-end">Код результата MPI</th>
+							<th scope="col" class="border-0 rounded-end">RRN операции</th>
+							<th scope="col" class="border-0 rounded-end">Internal ref операции</th>
+							<th scope="col" class="border-0 rounded-end">Auth code операции</th>
+							<th scope="col" class="border-0 rounded-end">Идентификатор счета на оплату</th>
+							<th scope="col" class="border-0 rounded-end">Дата устаревания счета на оплату</th>
+							<th scope="col" class="border-0 rounded-end">Остаток суммы возврата</th>
+							<th scope="col" class="border-0 rounded-end">Частота рекуррентного платежа</th>
+							<th scope="col" class="border-0 rounded-end">Дата завершения рекур. платежа</th>
+							<th scope="col" class="border-0 rounded-end">RRN первой опер. рекур. платежа</th>
+							<th scope="col" class="border-0 rounded-end">INT_REF перв. опер.рекур. платежа</th>
+						</tr>
+						</thead>
+
+						<!-- Table body START -->
+						<tbody>
+						@foreach (var item in Result.Operations.Rec)
+						{
+
+							<tr>
+								<td><NavLink href="@($"/admin/single-transaction/{@item.OrderId}")">@item.OrderId</NavLink></td>
+								<td>@item.MpiOrder</td>
+								<td>@item.Status</td>
+								<td>@item.StatusDesc</td>
+								<td>@item.Amount</td>
+								<td>@item.Currency</td>
+								<td>@item.Terminal</td>
+								<td>@item.ClientId</td>
+								<td>@item.CardMasked</td>
+								<td>@item.CardName</td>
+								<td>@item.CardExpdt</td>
+								<td>@item.CardToken</td>
+								<td>@item.Description</td>
+								<td>@item.DescOrder</td>
+								<td>@item.Email</td>
+								<td>@item.Lang</td>
+								<td>@item.Phone</td>
+								<td>@item.CreateDate</td>
+								<td>@item.Result</td>
+								<td>@item.Result</td>
+								<td>@item.ResultDesc</td>
+								<td>@item.Rc</td>
+								<td>@item.Rrn</td>
+								<td>@item.IntRef</td>
+								<td>@item.AuthCode</td>
+								<td>@item.InvId</td>
+								<td>@item.InvExpDate</td>
+								<td>@item.RevMaxAmount</td>
+								<td>@item.RecurFreq</td>
+								<td>@item.RequrExp</td>
+								<td>@item.RecurRef</td>
+								<td>@item.RecurIntRef</td>
+							</tr>
+
+						}
+						<!-- Table row -->
+						</tbody>
+						<!-- Table body END -->
+					</table>
+					<!-- Table END -->
+
+					<!-- Table END -->
+				</div>
+				<!-- Course table END -->
+			</div>
+			<!-- Card body END -->
+
+			<!-- Card footer START -->
+			
+			<!-- Card footer END -->
+		</div>
+		<!-- Card END -->
+				
+			}
+			else
+			{
+				<p>Данных нет</p>
+			}
+		}
+		else
+		{
+			<p>Данных нет</p>
+		}
+	}
+else
+{
+	<Loader loader="loading"></Loader>
+}
+
+
+
+@code {
+	protected string Date_To;
+	protected string Date_From;
+	DateRangePicker Picker;
+	private bool loading = false;
+	protected ResultFromXml.Result Result;
+
+
+
+
+	protected async Task AllTransactions()
+	{
+		if (!string.IsNullOrEmpty(Date_From) && !string.IsNullOrEmpty(Date_To))
+		{
+			loading = true;
+			try
+			{
+				var result = await PaymentService.GetAllTransactions(Date_From, Date_To);
+				if (result.Success)
+				{
+					Result = result.Data;
+				}
+				else
+				{
+					toaster.Warning(result.Message ?? "Что-то пошло не так");
+				}
+
+			}
+			catch (Exception ex)
+			{
+
+			}
+			loading = false;
+		}
+		else
+		{
+			toaster.Warning("Пожалуйста заполните поля дат");
+		}
+	}
+
+}
+    
+	
+}

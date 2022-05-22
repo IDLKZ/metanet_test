@@ -12,7 +12,7 @@ public class Subscription
     
     public string UserId { get; set; }
     
-    public ApplicationUser User { get; set; }
+    public virtual ApplicationUser User { get; set; }
 
     [Required] public bool Status { get; set; } = false;
     
@@ -21,5 +21,5 @@ public class Subscription
     
     
     public int? TransactionId { get; set; }
-    public Transaction Transaction { get; set; }
+    public virtual Transaction Transaction { get; set; }
 }

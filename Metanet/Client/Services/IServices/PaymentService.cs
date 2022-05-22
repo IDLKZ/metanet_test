@@ -2,6 +2,7 @@ using System.Text;
 using Metanet.Shared.DTO;
 using Metanet.Shared.Helpers;
 using System.Net.Http.Json;
+using Metanet.Shared.Models;
 using Metanet.Shared.ResponsesDTO;
 using Sotsera.Blazor.Toaster;
 
@@ -44,5 +45,34 @@ public class PaymentService : IPaymentService
         var result =  await _http.GetFromJsonAsync<ServiceResponse<bool>>($"api/payment/HasSubscription/{UserId}/{CourseId}");
         Console.WriteLine(result.Data);
         return result;
+    }
+    
+    public async Task<ServiceResponse<ResultFromXml.Result>> GetAllTransactions(string Date_From, string Date_To)
+    {
+        var result =  await _http.GetFromJsonAsync<ServiceResponse<ResultFromXml.Result>>($"api/Payment/GetAllTransactions/{Date_From}/{Date_To}");
+        return result;
+    }
+
+    public async Task<PaginationDTO<Transaction>> GetAllLocalTransactions(int page, int show = 5, string? search = "")
+    {
+        var result =  await _http.GetFromJsonAsync<ServiceResponse<PaginationDTO<Transaction>>>($"api/Payment/GetAllLocalTransactions?page={page}&show={show}&search={search}");
+        if (!result.Success)
+        {
+            _toaster.Warning(result.Message ?? "Что-то пошло не так");
+        }
+        return result.Data;
+    }
+
+
+    public async Task<ResultSingleXml.Result> GetSingleTransaction(string ORDER)
+    {
+        var result =  await _http.GetFromJsonAsync<ServiceResponse<ResultSingleXml.Result>>($"api/Payment/GetTransaction/{ORDER}");
+        if (!result.Success)
+        {
+            _toaster.Warning(result.Message ??"Что-то пошло не так");
+        }
+
+        return result.Data;
+
     }
 }

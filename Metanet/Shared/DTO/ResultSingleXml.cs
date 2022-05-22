@@ -70,6 +70,9 @@ public class Operation {
 	[XmlElement(ElementName="lang")] 
 	public string Lang { get; set; } 
 
+	[XmlElement(ElementName="order_id")] 
+	public string OrderId { get; set; } 
+	
 	[XmlElement(ElementName="mpi_order")] 
 	public string MpiOrder { get; set; } 
 
@@ -144,7 +147,7 @@ public class Operation {
 public class Result { 
 
 	[XmlElement(ElementName="code")] 
-	public string Code { get; set; } 
+	public int Code { get; set; } 
 
 	[XmlElement(ElementName="description")] 
 	public string Description { get; set; } 

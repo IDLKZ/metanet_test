@@ -32,7 +32,7 @@ public class SubscriptionController : ControllerBase
     }
     
     [HttpGet("{Id}")]
-    public async Task<ActionResult<ServiceResponse<Subscription>>> GetById(int Id)
+    public async Task<ActionResult<ServiceResponse<SubscriptionUpdateDTO>>> GetById(int Id)
     {
         var result = await subscriptionService.GetById(Id);
         return Ok(result);

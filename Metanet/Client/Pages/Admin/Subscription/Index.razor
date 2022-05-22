@@ -1,0 +1,184 @@
+@page "/admin/subscriptions/{page:int}"
+@page "/admin/subscriptions"
+@inject ISubscriptionService subscriptionService
+@inject Blazored.LocalStorage.ISyncLocalStorageService localStorage
+
+@if(Subscriptions != null){
+	
+		<!-- Title -->
+		<div class="row mb-3">
+			<div class="col-12 d-sm-flex justify-content-between align-items-center">
+				<h1 class="h3 mb-2 mb-sm-0">Подписки платформы <span class="badge bg-orange bg-opacity-10 text-orange">@Subscriptions.ItemCount</span></h1>
+			</div>
+		</div>
+
+
+		<!-- Card START -->
+		<div class="card bg-transparent border">
+
+			<!-- Card body START -->
+			<div class="card-body">
+				<!-- Course table START -->
+				<div class="table-responsive border-0 rounded-3">
+					<!-- Table START -->
+					<table class="table table-dark-gray align-middle p-4 mb-0 table-hover">
+						<!-- Table head -->
+						<thead>
+							<tr>
+								<th scope="col" class="border-0 rounded-start">#</th>
+								<th scope="col" class="border-0 rounded-start">Пользователь</th>
+								<th scope="col" class="border-0">Курсы</th>
+								<th scope="col" class="border-0">Транзакция</th>
+								<th scope="col" class="border-0">Статус</th>
+								<th scope="col" class="border-0">Действие</th>
+							</tr>
+						</thead>
+
+						<!-- Table body START -->
+						<tbody>
+							@foreach(var item in Subscriptions.Data)
+							{
+								<tr>
+									<!-- Table data -->
+									<td>@item.ID</td>
+									<td>
+										
+										@if (item.User != null)
+										{
+											<NavLink href="@($"/admin/user-update/{item.User.Id}")">
+												@item.User.Name (@item.User.Email)
+											</NavLink>
+										}
+										else
+										{
+											@item.UserId;
+										}
+
+
+									</td>
+									<td>
+										
+										@if (item.Course != null)
+										{
+											   <NavLink href="@($"/admin/course-edit/{item.Course.Alias}")">
+												  @item.Course.Title
+											  </NavLink>
+                                        		}
+                                        		else
+                                        		{
+                                        			@item.CourseID;
+                                        		}
+									</td>
+									<td>
+										@if (item.Transaction != null)
+                                          {
+                                        	<NavLink href="@($"/admin/single-transaction/{item.Transaction.ORDER}")">
+                                        		@item.Transaction.ORDER
+                                        	</NavLink>
+                                            }
+                                            else
+										     {
+                                             @item.TransactionId;
+                                             }
+									</td>
+									<td>@(item.Status == true ?"Открыт" : "Закрыт")</td>
+									<td>
+                                    	<div class="dropdown">
+                                    			<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    						Действия
+                                    			</button>
+                                    			<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    				<NavLink class="dropdown-item" href=@($"/admin/subscriptions-edit/{item.ID}")>Изменить</NavLink>
+                                    
+                                    			</div>
+                                    			</div>
+                                    </td>
+									
+
+								
+							</tr>
+							}
+							<!-- Table row -->
+						</tbody>
+						<!-- Table body END -->
+					</table>
+					<!-- Table END -->
+				</div>
+				<!-- Course table END -->
+			</div>
+			
+				<div class="container">
+					<nav aria-label="Page navigation example">
+					  <ul class="pagination">
+							@foreach(int i in Enumerable.Range(1,Subscriptions.PageCount))
+							{
+								<li class="@(i == page ? "page-item active" : "page-item")"><NavLink class="page-link" href=@($"/admin/subscriptions/{i}")>@i</NavLink></li>
+							}
+					 </ul>
+					</nav>
+				</div>
+			
+			<!-- Card body END -->
+
+			<!-- Card footer START -->
+			
+			<!-- Card footer END -->
+		</div>
+		<!-- Card END -->
+		<!-- Page main content END -->
+	
+}
+else
+{
+	<Loader loader = "true"></Loader>
+}
+
+
+
+
+@code {
+
+	[Parameter]
+	public int page { get; set; }
+
+	int showPage = 20;
+	string Search = "";
+	PaginationDTO<Subscription> Subscriptions;
+
+
+	protected override async Task OnInitializedAsync()
+	{
+		var pageLocal = localStorage.GetItem<int>("pageSubs");
+		if (pageLocal != null && pageLocal > 0)
+		{
+			page = pageLocal;
+		}
+		else
+		{
+			page = page <= 0 ? 1 : page;
+		}
+		Subscriptions = await subscriptionService.GetAllSubscription(page, showPage, Search);
+		StateHasChanged();
+	}
+
+	protected override async Task OnParametersSetAsync()
+	{
+		if (page > 0)
+		{
+			if (Subscriptions.Data.Count() == 0)
+			{
+				page = Subscriptions.LastPage;
+			}
+			localStorage.SetItem<int>("pageSubs", page);
+
+			Subscriptions = await subscriptionService.GetAllSubscription(page, showPage, Search);
+
+			StateHasChanged();
+		}
+
+}
+
+	
+
+
+}

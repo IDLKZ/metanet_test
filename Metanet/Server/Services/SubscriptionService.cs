@@ -1,4 +1,3 @@
-using System.Data.Entity;
 using System.Linq;
 using AutoMapper;
 using Metanet.Server.Database;
@@ -6,6 +5,7 @@ using Metanet.Shared.DTO;
 using Metanet.Shared.Models;
 using Metanet.Shared.ResponsesDTO;
 using EF = Microsoft.EntityFrameworkCore.EF;
+using Microsoft.EntityFrameworkCore;
 
 namespace Metanet.Server.Services;
 
@@ -52,7 +52,7 @@ public class SubscriptionService : ISubscriptionService
         if (Id == subscriptionUpdateDto.ID)
         {
             Subscription subscription = await dbContext.Subscriptions.FindAsync(Id);
-            if (subscription != null)
+            if (subscription != null && subscriptionUpdateDto.ID == subscription.ID)
             {
                 subscription = mapper.Map<Subscription>(subscriptionUpdateDto);
                  dbContext.Subscriptions.Update(subscription);
@@ -85,19 +85,19 @@ public class SubscriptionService : ISubscriptionService
         }
     }
 
-    public async Task<ServiceResponse<Subscription>> GetById(int Id)
+    public async Task<ServiceResponse<SubscriptionUpdateDTO>> GetById(int Id)
     {
-        Subscription subscription = await dbContext.Subscriptions.Include(s=>s.User).Include(c=>c.Course).FirstOrDefaultAsync(s=>s.ID==Id);
+        Subscription subscription = await dbContext.Subscriptions.Include(s=>s.User).Include(c=>c.Course).Include(t=>t.Transaction).FirstOrDefaultAsync(s=>s.ID == Id);
         if (subscription != null)
         {
-            return new ServiceResponse<Subscription>()
+            return new ServiceResponse<SubscriptionUpdateDTO>()
             {
                 Success = true,
-                Data = subscription,
+                Data = mapper.Map<SubscriptionUpdateDTO>(subscription),
             };
                  
         }
-        return new ServiceResponse<Subscription>()
+        return new ServiceResponse<SubscriptionUpdateDTO>()
         {
             Success = false,
             StatusCode = 400,
@@ -108,11 +108,11 @@ public class SubscriptionService : ISubscriptionService
 
     public async Task<ServiceResponse<PaginationDTO<Subscription>>> GetAllSubscriptions(int page, int show = 5, string? search = "")
     {
-        var query = dbContext.Subscriptions.Include(u => u.User).Include(c=>c.Course);
+        var query = dbContext.Subscriptions.Include(s=>s.User).Include(s=>s.Course).Include(t=>t.Transaction);
 
         var subscription = new PageResult<Subscription>(query, page, show);
         var content = mapper.Map <PaginationDTO<Subscription>> (subscription);
-
+        
         var result = new ServiceResponse<PaginationDTO<Subscription>>
         {
             Success = true,

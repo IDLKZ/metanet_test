@@ -1,0 +1,122 @@
+@page "/admin/single-transaction"
+@page "/admin/single-transaction/{ORDER}"
+@inject IPaymentService PaymentService
+
+
+<div class="col-12 d-sm-flex justify-content-between align-items-center">
+				<h1 class="h3 mb-2 mb-sm-0">Поиск по номеру заказа <span class="badge bg-orange bg-opacity-10 text-orange"></span></h1>
+</div>
+
+<div class="col-md-12 my-2">
+				
+				
+						<div class="rounded position-relative">
+							<input @bind="ORDER" class="form-control bg-transparent" type="search" placeholder="Поиск по номеру заказа" aria-label="Search"/>
+							<button class="btn bg-transparent px-2 py-0 position-absolute top-50 end-0 translate-middle-y" @onclick="OnSearch"><i class="fas fa-search fs-6 "></i></button>
+						</div>
+				
+			</div>
+
+<hr/>
+
+<div class="row">
+	<div class="col-md-12">
+		@if (!loading)
+		{
+			@if (Result != null)
+			{
+				@if (Result.Operation != null)
+				{
+					<div class="card">
+						<ul class="list-group list-group-flush">
+							<li class="list-group-item">Номер заказа: @ORDER</li>
+							<li class="list-group-item">Уникальный номер заказа MPI: @Result.Operation.MpiOrder</li>
+							<li class="list-group-item">Текущий статус операции: @Result.Operation.Status</li>
+							<li class="list-group-item">Описание статуса операции: @Result.Operation.StatusDesc</li>
+							<li class="list-group-item">Сумма операции: @Result.Operation.Amount</li>
+							<li class="list-group-item">Валюта операции: @Result.Operation.Currency</li>
+							<li class="list-group-item">Терминал: @Result.Operation.Terminal</li>
+							<li class="list-group-item">Id клиента: @Result.Operation.ClientId</li>
+							<li class="list-group-item">Карта плательщика: @Result.Operation.CardMasked</li>
+							<li class="list-group-item">Имя клиента на карте плательщика: @Result.Operation.CardName</li>
+							<li class="list-group-item">Дата карты плательщика: @Result.Operation.CardExpdt</li>
+							<li class="list-group-item">Токен карты плательщика: @Result.Operation.CardToken</li>
+							<li class="list-group-item">Краткое описание операции: @Result.Operation.DescOrder</li>
+							<li class="list-group-item">Полное описание операции: @Result.Operation.Description</li>
+							<li class="list-group-item">Email клиента: @Result.Operation.Email</li>
+							<li class="list-group-item">Язык клиента: @Result.Operation.Lang</li>
+							<li class="list-group-item">Телефон клиента: @Result.Operation.Phone</li>
+							<li class="list-group-item">Дата создания операции: @Result.Operation.CreateDate</li>
+							<li class="list-group-item">Результат: @Result.Operation.Result</li>
+							<li class="list-group-item">Описание результат: @Result.Operation.ResultDesc</li>
+							<li class="list-group-item">RRN: @Result.Operation.Rrn</li>
+							<li class="list-group-item">Auth code операции: @Result.Operation.AuthCode</li>
+							<li class="list-group-item">Идентификатор счета на оплату: @Result.Operation.InvId</li>
+							<li class="list-group-item">Остаток суммы возврата: @Result.Operation.RevMaxAmount</li>
+							<li class="list-group-item">Частота рекуррентных платежей: @Result.Operation.RecurFreq</li>
+							<li class="list-group-item">Список возвратов:</li>
+							<div>
+								@if (Result.Operation.Refunds != null)
+								{
+									@foreach (var item in Result.Operation.Refunds.Rec)
+									{
+										<li class="list-group-item">Текущий статус возврата: @item.Status</li>
+										<li class="list-group-item">Описание статуса возврата: @item.StatusDesc</li>
+										<li class="list-group-item">RC возврата: @item.RevRc</li>
+										<li class="list-group-item">Сумма возврата: @item.RevAmount</li>
+										<li class="list-group-item">Описание возврата:@item.RevDescription</li>
+										<li class="list-group-item">Ошибка возврата:@item.RevError</li>
+										<li class="list-group-item">Дата возврата: @item.RevDate</li>
+									}
+								}
+							</div>
+
+						</ul>
+					</div>
+				}
+				
+			}
+			else
+			{
+				<p>По данному номеру заказа ничего не найдено</p>
+			}
+		}
+		else
+		{
+			<Loader loader="loading"></Loader>
+		}
+		
+		
+		
+	</div>
+	
+	
+</div>
+
+
+@code {
+	[Parameter]
+    public string ORDER { get; set; }
+	ResultSingleXml.Result Result;
+	bool loading = false;
+	protected async Task OnSearch()
+	{
+		loading = true;
+		Result = await PaymentService.GetSingleTransaction(ORDER);
+		loading = false;
+		StateHasChanged();
+	}
+	protected override async Task OnParametersSetAsync()
+	{
+		if (!string.IsNullOrEmpty(ORDER))
+		{
+			loading = true;
+			Result = await PaymentService.GetSingleTransaction(ORDER);
+			loading = false;
+			StateHasChanged();	
+		}
+
+	}
+	
+	
+}

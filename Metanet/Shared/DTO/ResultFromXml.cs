@@ -125,7 +125,7 @@ public class Operations {
 public class Result { 
 
 	[XmlElement(ElementName="code")] 
-	public string Code { get; set; } 
+	public int Code { get; set; } 
 
 	[XmlElement(ElementName="description")] 
 	public string Description { get; set; } 

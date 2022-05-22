@@ -222,16 +222,9 @@ else
 
 	protected async Task OnSearch()
 	{
-		if (!string.IsNullOrEmpty(Search))
-		{
-			if(!string.IsNullOrEmpty(Search))
-			{
-				localStorage.SetItem<int>("page", 1);
-				Users = await UserService.GetAllUsers(1,showPage,Search);
-			StateHasChanged();
-			}
-			
-		}
+		localStorage.SetItem<int>("page", 1);
+		Users = await UserService.GetAllUsers(1,showPage,Search);
+		StateHasChanged();
 	}
 
 

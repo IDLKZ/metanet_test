@@ -1,0 +1,226 @@
+@page "/admin/local-transaction/{page:int}"
+@page "/admin/local-transaction"
+@inject IPaymentService paymentService
+@inject Blazored.LocalStorage.ISyncLocalStorageService localStorage
+
+@if(Transactions != null){
+	
+		<!-- Title -->
+		<div class="row mb-3">
+			<div class="col-12 d-sm-flex justify-content-between align-items-center">
+				<h1 class="h3 mb-2 mb-sm-0">Транзакции платформы <span class="badge bg-orange bg-opacity-10 text-orange">@Transactions.ItemCount</span></h1>
+			</div>
+			<div class="col-md-12 my-2">
+				
+				
+						<div class="rounded position-relative">
+							<input @bind="Search" class="form-control bg-transparent" type="search" placeholder="Поиск по номеру заказа, описанию, сумме или результату" aria-label="Search"/>
+							<button class="btn bg-transparent px-2 py-0 position-absolute top-50 end-0 translate-middle-y" @onclick="OnSearch"><i class="fas fa-search fs-6 "></i></button>
+							
+				
+						</div>
+				
+			</div>
+			
+		</div>
+
+
+		<!-- Card START -->
+		<div class="card bg-transparent border">
+
+			<!-- Card body START -->
+			<div class="card-body">
+				<!-- Course table START -->
+				<div class="table-responsive border-0 rounded-3">
+					<!-- Table START -->
+					<table class="table table-dark-gray align-middle p-4 mb-0 table-hover">
+						<!-- Table head -->
+						<thead>
+							<tr>
+								<th scope="col" class="border-0 rounded-start">#</th>
+								<th scope="col" class="border-0 rounded-start">Номер заказа</th>
+								<th scope="col" class="border-0">Номер заказа MPI</th>
+								<th scope="col" class="border-0">RRN</th>
+								<th scope="col" class="border-0">Код ответа (RES_CODE)</th>
+								<th scope="col" class="border-0">Статус</th>
+								<th scope="col" class="border-0">Курс</th>
+								<th scope="col" class="border-0">Пользователь</th>
+								<th scope="col" class="border-0">Сумма платежа</th>
+								<th scope="col" class="border-0 rounded-end">Валюта</th>
+								<th scope="col" class="border-0 rounded-end">Описание платежа</th>
+								<th scope="col" class="border-0 rounded-end">Ключ</th>
+							</tr>
+						</thead>
+
+						<!-- Table body START -->
+						<tbody>
+							@foreach(var item in Transactions.Data)
+							{
+								<tr>
+									<!-- Table data -->
+									<td>@item.ID</td>
+									<td><NavLink href="@($"/admin/single-transaction/{@item.ORDER}")">@item.ORDER</NavLink></td>
+									<td>@item.MPI_ORDER</td>
+									<td>@item.RRN</td>
+									<td>@item.RES_CODE</td>
+									<td>
+										@switch (item.Status)
+										{
+											case 0 :
+												<p>Не оплачен</p>
+												break;
+											case -1 :
+												<p>Ошибка при оплате</p>
+												break;
+											case 1 :
+												<p>Оплачено</p>
+												break;
+												default:
+													<p>-</p>	
+													break;
+										}
+									</td>
+									<!-- Course -->
+									<td>
+										@if (item.Course != null)
+										{
+										<div class="d-flex align-items-center position-relative">
+
+											<!-- Image -->
+											<div class="w-60px">
+												<img src="@item.Course.ImageUrl" class="rounded" alt="">
+											</div>
+											<!-- Title -->
+											<h6 class="mb-0 ms-2">
+												<NavLink href="@($"/admin/course-edit/{item.Course.Alias}")" class="stretched-link">@item.Course.Title</NavLink>
+											</h6>
+										</div>
+										}
+
+									</td>
+                                    <!-- Course -->		
+									<!-- User -->
+									<td>
+										@if (item.User != null)
+										{
+											<div class="d-flex align-items-center position-relative">
+
+												<!-- Image -->
+												<div class="w-60px">
+													<img src="@item.User.ImageUrl" class="rounded" alt="">
+												</div>
+												<!-- Title -->
+												<h6 class="mb-0 ms-2">
+													<NavLink href="@($"/admin/user-update/{item.User.Id}")" class="stretched-link">@item.User.UserName</NavLink>
+												</h6>
+											</div>
+										}
+									
+									</td>
+									<!-- User -->
+									<td>
+										@item.AMOUNT
+									</td>
+									<td>
+										@item.CURRENCY
+									</td>
+									<td>
+										@item.RES_DESC
+									</td>
+									<td>
+										@item.P_SIGN
+									</td>
+
+								
+							</tr>
+							}
+							<!-- Table row -->
+						</tbody>
+						<!-- Table body END -->
+					</table>
+					<!-- Table END -->
+				</div>
+				<!-- Course table END -->
+			</div>
+			
+				<div class="container">
+					<nav aria-label="Page navigation example">
+					  <ul class="pagination">
+							@foreach(int i in Enumerable.Range(1,Transactions.PageCount))
+							{
+								<li class="@(i == page ? "page-item active" : "page-item")"><NavLink class="page-link" href=@($"/admin/local-transaction/{i}")>@i</NavLink></li>
+							}
+					 </ul>
+					</nav>
+				</div>
+			
+			<!-- Card body END -->
+
+			<!-- Card footer START -->
+			
+			<!-- Card footer END -->
+		</div>
+		<!-- Card END -->
+		<!-- Page main content END -->
+	
+}
+else
+{
+	<Loader loader = "true"></Loader>
+}
+
+
+
+
+@code {
+
+	[Parameter]
+	public int page { get; set; }
+
+	int showPage = 20;
+	string Search = "";
+	PaginationDTO<Transaction> Transactions;
+
+
+	protected override async Task OnInitializedAsync()
+	{
+		var pageLocal = localStorage.GetItem<int>("pageTransaction");
+		if (pageLocal != null && pageLocal > 0)
+		{
+			page = pageLocal;
+		}
+		else
+		{
+			page = page <= 0 ? 1 : page;
+		}
+		Transactions = await paymentService.GetAllLocalTransactions(page, showPage, Search);
+		StateHasChanged();
+	}
+
+	protected override async Task OnParametersSetAsync()
+	{
+		if (page > 0)
+		{
+			if (Transactions.Data.Count() == 0)
+			{
+				page = Transactions.LastPage;
+			}
+			localStorage.SetItem<int>("pageTransaction", page);
+
+			Transactions = await paymentService.GetAllLocalTransactions(page, showPage, Search);
+
+			StateHasChanged();
+		}
+
+	}
+
+
+	protected async Task OnSearch()
+	{
+		localStorage.SetItem<int>("pageTransaction", 1);
+		Transactions = await paymentService.GetAllLocalTransactions(page, showPage, Search);
+		StateHasChanged();
+	}
+
+
+}
