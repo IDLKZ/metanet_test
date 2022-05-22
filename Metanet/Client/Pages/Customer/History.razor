@@ -1,0 +1,89 @@
+@page "/customer/history"
+@inject ITransactionService transactionService
+
+<div class="container">
+    <div class="card bg-transparent border rounded-3">
+					<!-- Card header START -->
+					<div class="card-header bg-transparent border-bottom">
+						<h3 class="mb-0">Billing history</h3>
+					</div>
+					<!-- Card header END -->
+
+					<!-- Card body START -->
+					<div class="card-body">
+						
+						<!-- Student list table START -->
+						<div class="table-responsive border-0">
+							<table class="table table-dark-gray align-middle p-4 mb-0 table-hover">
+								<!-- Table head -->
+								<thead>
+									<tr>
+										<th scope="col" class="border-0 rounded-start">Дата</th>
+										<th scope="col" class="border-0">Наименование курса</th>
+										<th scope="col" class="border-0">Статус</th>
+										<th scope="col" class="border-0">Сумма</th>
+									</tr>
+								</thead>
+								<!-- Table body -->
+								<tbody>
+								<!-- Table item -->
+								@foreach (var item in transactions)
+								{
+									<tr>
+										<!-- Date item -->
+										<td>@item.CreatedAt.ToString("dd/MM/yyyy hh:mm")</td>
+
+										<!-- Title item -->
+										<td>
+											<h6 class="mt-2 mt-lg-0 mb-0">
+												<a href="#">@item.Course.Title</a>
+											</h6>
+										</td>
+
+										<!-- Status item -->
+										<td>
+											@if (item.Status == -1)
+											{
+												<span class="badge bg-danger bg-opacity-10 text-danger">
+													Провален
+                                                </span>
+											}
+											@if (item.Status == 0)
+											{
+												<span class="badge bg-warning bg-opacity-10 text-warning">
+													В процессе
+                                                </span>
+											}
+											@if (item.Status == 1)
+											{
+												<span class="badge bg-success bg-opacity-10 text-success">
+													Оплачен
+                                                </span>
+											}
+											
+										</td>
+
+										<!-- total item -->
+										<td>@item.AMOUNT тг</td>
+										
+									</tr>
+								}
+								</tbody>
+							</table>
+						</div>
+						<!-- Student list table END -->
+					</div>
+					<!-- Card body START -->
+				</div>
+</div>
+
+@code {
+    List<Transaction> transactions = new List<Transaction>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        transactions = await transactionService.GetAllAsync();
+        Console.WriteLine(transactions);
+    }
+
+}

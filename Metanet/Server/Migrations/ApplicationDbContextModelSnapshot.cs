@@ -336,8 +336,10 @@ namespace Metanet.Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("AMOUNT")
-                        .HasColumnType("int");
+                    b.Property<string>("AMOUNT")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("CURRENCY")
                         .IsRequired()
@@ -345,6 +347,9 @@ namespace Metanet.Server.Migrations
 
                     b.Property<int>("CourseId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("MPI_ORDER")
                         .HasColumnType("longtext");

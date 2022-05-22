@@ -7,11 +7,12 @@ namespace Metanet.Server.Database
 {
     
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser,Role,string,IdentityUserClaim<string>,
-        UserRole,IdentityUserLogin<string>,IdentityRoleClaim<string>,IdentityUserToken<string>
-        >
+        UserRole,IdentityUserLogin<string>,IdentityRoleClaim<string>,IdentityUserToken<string>>
     {
+
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options,IHttpContextAccessor httpContextAccessor) : base(options)
         {
+           
         }
 
         protected override void OnModelCreating(ModelBuilder builder)

@@ -52,7 +52,9 @@ builder.Services.AddSwaggerGen(
     });
 // Add services to the container.
 builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddControllersWithViews().AddJsonOptions(opts => opts.JsonSerializerOptions.PropertyNamingPolicy = null);
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddRazorPages();
 //Using Mysql As DATABASE
 builder.Services.AddDbContext<ApplicationDbContext>(
@@ -82,6 +84,7 @@ builder.Services.AddScoped<ITeamService, TeamService>();
 builder.Services.AddScoped<IHomeService, HomeService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
+builder.Services.AddScoped<ITransactionService, TransactionService>();
 
 //http and jwt
 builder.Services.AddHttpClient();

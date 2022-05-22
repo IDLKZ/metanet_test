@@ -39,5 +39,6 @@ public class Transaction
     
     public string? P_SIGN { get; set; }
     
+    public DateTime CreatedAt { get; set; } = DateTime.Now;
     
 }

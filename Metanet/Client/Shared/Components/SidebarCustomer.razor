@@ -12,14 +12,14 @@
 								<!-- Dashboard menu -->
 								<div class="list-group list-group-dark list-group-borderless">
 									<NavLink class="list-group-item" Match="NavLinkMatch.All" href="/customer"><i class="bi bi-ui-checks-grid fa-fw me-2"></i>Главная</NavLink>
-									<NavLink class="list-group-item" href="instructor-manage-course.html"><i class="bi bi-basket fa-fw me-2"></i>Оплата</NavLink>
-									<NavLink class="list-group-item" href="instructor-manage-course.html"><i class="bi bi-basket fa-fw me-2"></i>Мои курсы</NavLink>
+									<NavLink class="list-group-item" href="/customer/history"><i class="bi bi-basket fa-fw me-2"></i>История транзакций</NavLink>
+									@* <NavLink class="list-group-item" href="instructor-manage-course.html"><i class="bi bi-basket fa-fw me-2"></i>Мои курсы</NavLink> *@
 									<NavLink class="list-group-item" href="instructor-earning.html"><i class="bi bi-graph-up fa-fw me-2"></i>Мои блоки</NavLink>
-									<NavLink class="list-group-item" href="instructor-studentlist.html"><i class="bi bi-people fa-fw me-2"></i>Мои видеоуроки</NavLink>
-									<NavLink class="list-group-item" href="instructor-order.html"><i class="bi bi-folder-check fa-fw me-2"></i>Сообщения</NavLink>
+									@* <NavLink class="list-group-item" href="instructor-studentlist.html"><i class="bi bi-people fa-fw me-2"></i>Мои видеоуроки</NavLink> *@
+									@* <NavLink class="list-group-item" href="instructor-order.html"><i class="bi bi-folder-check fa-fw me-2"></i>Сообщения</NavLink> *@
 									<NavLink class="list-group-item" href="@($"/customer/edit/{userId}")"><i class="bi bi-pencil-square fa-fw me-2"></i>Изменить Профиль</NavLink>
-									<NavLink class="list-group-item" href="instructor-delete-account.html"><i class="bi bi-trash fa-fw me-2"></i>Удалить профиль</NavLink>
-									<NavLink class="list-group-item text-danger bg-danger-soft-hover" href="sign-in.html"><i class="fas fa-sign-out-alt fa-fw me-2"></i>Выход</NavLink>
+									@* <NavLink class="list-group-item" href="instructor-delete-account.html"><i class="bi bi-trash fa-fw me-2"></i>Удалить профиль</NavLink> *@
+									<NavLink class="list-group-item text-danger bg-danger-soft-hover" href="/logout"><i class="fas fa-sign-out-alt fa-fw me-2"></i>Выход</NavLink>
 								</div>
 							</div>
 						</div>
