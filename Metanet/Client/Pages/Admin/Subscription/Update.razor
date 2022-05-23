@@ -1,0 +1,91 @@
+@page "/admin/subscriptions-edit/{Id:int}"
+@inject ISubscriptionService SubscriptionService
+@inject NavigationManager NavigationManager
+
+
+
+@if(SubscriptionUpdateDto != null)
+{
+	<!-- Card body START -->
+				<div class="card-body">
+					<!-- Step content START -->
+					<div class="bs-stepper-content">
+						
+
+							<!-- Step 1 content START -->
+							<div id="step-1" role="tabpanel" class="content show" aria-labelledby="steppertrigger1">
+								<!-- Title -->
+								<h4>Детали подписки</h4>
+
+								<hr> <!-- Divider -->
+								<EditForm Model="SubscriptionUpdateDto" OnValidSubmit="Save">
+									<DataAnnotationsValidator></DataAnnotationsValidator>
+									<ValidationSummary></ValidationSummary>
+								<!-- Basic information START -->
+								<div class="row g-4">
+									<!-- Course title -->
+									<div class="col-12">
+										<p>@SubscriptionUpdateDto.User.Name</p>
+									</div>
+									<div class="col-12">
+										<p>@SubscriptionUpdateDto.Course.Title</p>
+									</div>
+									<div class="col-12">
+                                          <p>@SubscriptionUpdateDto.Transaction.ORDER</p>
+                                    </div>
+									<div class="col-12">
+										Одобрен
+										<InputCheckbox @bind-Value=@SubscriptionUpdateDto.Status></InputCheckbox>
+									</div>
+									
+									<!-- Step 1 button -->
+									<div class="d-flex justify-content-end mt-3">
+										<button class="btn btn-primary next-btn mb-0">Обновить</button>
+									</div>
+								</div>
+
+								</EditForm>
+								<!-- Basic information START -->
+							</div>
+							<!-- Step 1 content END -->
+					</div>
+				</div>
+				<!-- Card body END -->
+}
+else{
+	<Loader loader=true></Loader>
+}
+
+
+
+@code {
+    [Parameter] 
+    public int Id { get; set; }
+
+    SubscriptionUpdateDTO SubscriptionUpdateDto;
+    
+    
+    
+    protected override async Task OnInitializedAsync()
+    {
+	    SubscriptionUpdateDto = await SubscriptionService.GetById(Id);
+        if (SubscriptionUpdateDto == null)
+        {
+            NavigationManager.NavigateTo("/admin/subscriptions");
+        }
+
+    }
+
+    protected async  Task Save()
+    {
+        var result = await SubscriptionService.Update(Id, SubscriptionUpdateDto);
+        if (result)
+        {
+            NavigationManager.NavigateTo("/admin/subscriptions");
+        }
+    }
+
+
+
+
+}
