@@ -13,5 +13,6 @@ namespace Metanet.Shared.DTO
         public int Blogs { get; set; }
         public int Lessons { get; set; }
         public int Materials { get; set; }
+        public int Transactions { get; set; }
     }
 }

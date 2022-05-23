@@ -70,6 +70,12 @@ namespace Metanet.Server.Controllers
             var result = await UserService.GetUserById(userId);
             return Ok(result);
         }
+        [HttpGet("{userId}")]
+        public async Task<ActionResult<ApplicationUser>> GetAllUserInfoById(string userId)
+        {
+            var result = await UserService.GetAllUserInfoById(userId);
+            return Ok(result);
+        }
 
     }
 }

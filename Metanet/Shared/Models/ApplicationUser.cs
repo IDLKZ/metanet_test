@@ -14,6 +14,10 @@ namespace Metanet.Shared.Models
         public DateTime? UpdatedAt { get; set; }
 
         public ICollection<UserRole> UserRoles { get; set; }
+        
+        public ICollection<Transaction> Transactions { get; set; }
+        public ICollection<Subscription> Subscriptions { get; set; }
+        
 
 
     }

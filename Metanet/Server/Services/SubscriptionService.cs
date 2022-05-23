@@ -55,7 +55,7 @@ public class SubscriptionService : ISubscriptionService
             Subscription subscription = await dbContext.Subscriptions.FindAsync(Id);
             if (subscription != null && subscriptionUpdateDto.ID == subscription.ID)
             {
-                subscription = mapper.Map<Subscription>(subscriptionUpdateDto);
+                subscription.Status = subscriptionUpdateDto.Status;
                  dbContext.Subscriptions.Update(subscription);
                  await dbContext.SaveChangesAsync();
                  return new ServiceResponse<bool>()
@@ -86,19 +86,21 @@ public class SubscriptionService : ISubscriptionService
         }
     }
 
-    public async Task<ServiceResponse<SubscriptionUpdateDTO>> GetById(int Id)
+    public async Task<ServiceResponse<Tuple<Subscription,SubscriptionUpdateDTO>>> GetById(int Id)
     {
         Subscription subscription = await dbContext.Subscriptions.Include(s=>s.User).Include(c=>c.Course).Include(t=>t.Transaction).FirstOrDefaultAsync(s=>s.ID == Id);
         if (subscription != null)
         {
-            return new ServiceResponse<SubscriptionUpdateDTO>()
+            Tuple<Subscription, SubscriptionUpdateDTO> data = new Tuple<Subscription, SubscriptionUpdateDTO>(subscription, mapper.Map<SubscriptionUpdateDTO>(subscription));
+            
+            return new ServiceResponse<Tuple<Subscription,SubscriptionUpdateDTO>>()
             {
                 Success = true,
-                Data = mapper.Map<SubscriptionUpdateDTO>(subscription),
+                Data = data,
             };
                  
         }
-        return new ServiceResponse<SubscriptionUpdateDTO>()
+        return new ServiceResponse<Tuple<Subscription,SubscriptionUpdateDTO>>()
         {
             Success = false,
             StatusCode = 400,

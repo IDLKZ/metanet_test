@@ -1,0 +1,395 @@
+@page "/admin/user-show/{Id}"
+@inject IUserService UserService
+@inject NavigationManager NavigationManager
+<div>
+    @if (User != null)
+    {
+	    <div class="page-content-wrapper border">
+    
+	    <!-- Title -->
+	    <div class="row">
+		    <div class="col-12 mb-3">
+			    <h1 class="h3 mb-2 mb-sm-0">Страница пользователя</h1>
+		    </div>
+	    </div>
+    				
+	    <div class="row g-4">
+    
+	    <!-- Personal information START -->
+	    <div class="col-xxl-12">
+		    <div class="card bg-transparent border rounded-3 h-100">
+    
+			    <!-- Card header -->
+			    <div class="card-header bg-light border-bottom">
+				    <h5 class="card-header-title mb-0">О пользователе @User.Name</h5>
+			    </div>
+    
+			    <!-- Card body START -->
+			    <div class="card-body">
+				    <!-- Profile picture -->
+				    <div class="avatar avatar-xl mb-3">
+					    <img class="avatar-img rounded-circle border border-white border-3 shadow" src="@User.ImageUrl" alt="@User.Name">
+				    </div>
+    
+				    <!-- Information START -->
+				    <div class="row">
+    
+					    <!-- Information item -->
+					    <div class="col-md-6">
+						    <ul class="list-group list-group-borderless">
+							    <li class="list-group-item">
+								    <span>Логин:</span>
+								    <span class="h6 mb-0">@User.UserName</span>
+							    </li>
+    
+							    <li class="list-group-item">
+								    <span>ФИО:</span>
+								    <span class="h6 mb-0">@User.Name</span>
+							    </li>
+    
+							    <li class="list-group-item">
+								    <span>Email:</span>
+								    <span class="h6 mb-0">@User.Email</span>
+							    </li>
+    
+							    <li class="list-group-item">
+								    <span>Телефон:</span>
+								    <span class="h6 mb-0">@User.PhoneNumber</span>
+							    </li>
+						    </ul>
+					    </div>
+    
+					    <!-- Information item -->
+					    <div class="col-md-6">
+						    <ul class="list-group list-group-borderless">
+							    <li class="list-group-item">
+								    <span>ID:</span>
+								    <span class="h6 mb-0">@User.Id</span>
+							    </li>
+    
+							    <li class="list-group-item">
+								    <span>Зарегистрирован:</span>
+								    <span class="h6 mb-0">@User.CreatedAt.ToString()</span>
+							    </li>
+							    <li class="list-group-item">
+								    <span>Изменен:</span>
+								    <span class="h6 mb-0">@User.UpdatedAt.ToString()</span>
+							    </li>
+    
+							    <li class="list-group-item">
+								    <span>Роль:</span>
+								    <span class="h6 mb-0">
+									    @if (User.UserRoles != null)
+									    {
+										    @foreach (var item in User.UserRoles)
+										    {
+											    @item.Role.Name
+										    }
+									    }
+								    </span>
+							    </li>
+						    </ul>
+					    </div>
+
+					    <!-- Information item -->
+					    <div class="col-12">
+						    <ul class="list-group list-group-borderless">
+							    <li class="list-group-item d-flex">
+								    <span>О себе:</span>
+								    <p class="h6 mb-0">
+									    @User.Description
+								    </p>
+							    </li>
+						    </ul>
+					    </div>
+				    </div>
+				    <!-- Information END -->
+			    </div>
+			    <!-- Card body END -->
+		    </div>
+	    </div>
+	    <!-- Personal information END -->
+    
+    			
+    		
+	    <!-- Instructor course list START -->
+	    <div class="col-12">
+		    <div class="card bg-transparent border h-100">
+    
+			    <!-- Card header -->
+			    <div class="card-header bg-light border-bottom">
+				    <h5 class="mb-0">Приобретенные курсы</h5>
+			    </div>
+				<!-- Card START -->
+                		<div class="card bg-transparent border">
+                
+                			<!-- Card body START -->
+                			<div class="card-body">
+                				<!-- Course table START -->
+                				<div class="table-responsive border-0 rounded-3">
+                					<!-- Table START -->
+                					<table class="table table-dark-gray align-middle p-4 mb-0 table-hover">
+                						<!-- Table head -->
+                						<thead>
+                							<tr>
+                								<th scope="col" class="border-0 rounded-start">#</th>
+                								<th scope="col" class="border-0 rounded-start">Пользователь</th>
+                								<th scope="col" class="border-0">Курсы</th>
+                								<th scope="col" class="border-0">Транзакция</th>
+                								<th scope="col" class="border-0">Статус</th>
+                								<th scope="col" class="border-0">Действие</th>
+                							</tr>
+                						</thead>
+                
+                						<!-- Table body START -->
+                						<tbody>
+                							@foreach(var item in User.Subscriptions)
+                							{
+                								<tr>
+                									<!-- Table data -->
+                									<td>@item.ID</td>
+                									<td>
+                										
+                										@if (item.User != null)
+                										{
+                											<NavLink href="@($"/admin/user-update/{item.User.Id}")">
+                												@item.User.Name (@item.User.Email)
+                											</NavLink>
+                										}
+                										else
+                										{
+                											@User.Name;
+                										}
+                
+                
+                									</td>
+                									<td>
+                										
+                										@if (item.Course != null)
+                										{
+                											   <NavLink href="@($"/admin/course-edit/{item.Course.Alias}")">
+                												  @item.Course.Title
+                											  </NavLink>
+                                                        		}
+                                                        		else
+                                                        		{
+                                                        			@item.CourseID;
+                                                        		}
+                									</td>
+                									<td>
+                										@if (item.Transaction != null)
+                                                          {
+                                                        	<NavLink href="@($"/admin/single-transaction/{item.Transaction.ORDER}")">
+                                                        		@item.Transaction.ORDER
+                                                        	</NavLink>
+                                                            }
+                                                            else
+                										     {
+                                                             @item.TransactionId;
+                                                             }
+                									</td>
+                									<td>@(item.Status == true ?"Открыт" : "Закрыт")</td>
+                									<td>
+                                                    	<div class="dropdown">
+                                                    			<button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    						Действия
+                                                    			</button>
+                                                    			<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                    				<NavLink class="dropdown-item" href=@($"/admin/subscriptions-edit/{item.ID}")>Изменить</NavLink>
+                                                    
+                                                    			</div>
+                                                    			</div>
+                                                    </td>
+                									
+                
+                								
+                							</tr>
+                							}
+                							<!-- Table row -->
+                						</tbody>
+                						<!-- Table body END -->
+                					</table>
+                					<!-- Table END -->
+                				</div>
+                				<!-- Course table END -->
+                			</div>
+			                <!-- Card body END -->
+                
+                			<!-- Card footer START -->
+                			
+                			<!-- Card footer END -->
+                		</div>
+			    
+			    <!-- Card END -->
+    					
+		    </div>
+	    </div>
+	    <!-- Instructor course list END -->
+    
+	    <!-- Student review START -->
+	    <div class="col-12">
+	    <div class="card bg-transparent border">
+    
+	    <!-- Card header START -->
+	    <div class="card-header border-bottom bg-light">
+		    <h5 class="mb-0">Транзакции</h5>
+	    </div>
+	    <!-- Card header END -->
+    		<!-- Card START -->
+            		<div class="card bg-transparent border">
+            
+            			<!-- Card body START -->
+            			<div class="card-body">
+            				<!-- Course table START -->
+            				<div class="table-responsive border-0 rounded-3">
+            					<!-- Table START -->
+            					<table class="table table-dark-gray align-middle p-4 mb-0 table-hover">
+            						<!-- Table head -->
+            						<thead>
+            							<tr>
+            								<th scope="col" class="border-0 rounded-start">#</th>
+            								<th scope="col" class="border-0 rounded-start">Номер заказа</th>
+            								<th scope="col" class="border-0">Номер заказа MPI</th>
+            								<th scope="col" class="border-0">RRN</th>
+            								<th scope="col" class="border-0">Код ответа (RES_CODE)</th>
+            								<th scope="col" class="border-0">Статус</th>
+            								<th scope="col" class="border-0">Курс</th>
+            								<th scope="col" class="border-0">Пользователь</th>
+            								<th scope="col" class="border-0">Сумма платежа</th>
+            								<th scope="col" class="border-0 rounded-end">Валюта</th>
+            								<th scope="col" class="border-0 rounded-end">Описание платежа</th>
+            								<th scope="col" class="border-0 rounded-end">Ключ</th>
+            							</tr>
+            						</thead>
+            
+            						<!-- Table body START -->
+            						<tbody>
+            							@foreach(var item in User.Transactions)
+            							{
+            								<tr>
+            									<!-- Table data -->
+            									<td>@item.ID</td>
+            									<td><NavLink href="@($"/admin/single-transaction/{@item.ORDER}")">@item.ORDER</NavLink></td>
+            									<td>@item.MPI_ORDER</td>
+            									<td>@item.RRN</td>
+            									<td>@item.RES_CODE</td>
+            									<td>
+            										@switch (item.Status)
+            										{
+            											case 0 :
+            												<p>Не оплачен</p>
+            												break;
+            											case -1 :
+            												<p>Ошибка при оплате</p>
+            												break;
+            											case 1 :
+            												<p>Оплачено</p>
+            												break;
+            												default:
+            													<p>-</p>	
+            													break;
+            										}
+            									</td>
+            									<!-- Course -->
+            									<td>
+            										@if (item.Course != null)
+            										{
+            										<div class="d-flex align-items-center position-relative">
+            
+            											<!-- Image -->
+            											<div class="w-60px">
+            												<img src="@item.Course.ImageUrl" class="rounded" alt="">
+            											</div>
+            											<!-- Title -->
+            											<h6 class="mb-0 ms-2">
+            												<NavLink href="@($"/admin/course-edit/{item.Course.Alias}")" class="stretched-link">@item.Course.Title</NavLink>
+            											</h6>
+            										</div>
+            										}
+            
+            									</td>
+                                                <!-- Course -->		
+            									<!-- User -->
+            									<td>
+            										@if (item.User != null)
+            										{
+            											<div class="d-flex align-items-center position-relative">
+            
+            												<!-- Image -->
+            												<div class="w-60px">
+            													<img src="@item.User.ImageUrl" class="rounded" alt="">
+            												</div>
+            												<!-- Title -->
+            												<h6 class="mb-0 ms-2">
+            													<NavLink href="@($"/admin/user-update/{item.User.Id}")" class="stretched-link">@item.User.UserName</NavLink>
+            												</h6>
+            											</div>
+            										}
+            									
+            									</td>
+            									<!-- User -->
+            									<td>
+            										@item.AMOUNT
+            									</td>
+            									<td>
+            										@item.CURRENCY
+            									</td>
+            									<td>
+            										@item.RES_DESC
+            									</td>
+            									<td>
+            										@item.P_SIGN
+            									</td>
+            
+            								
+            							</tr>
+            							}
+            							<!-- Table row -->
+            						</tbody>
+            						<!-- Table body END -->
+            					</table>
+            					<!-- Table END -->
+            				</div>
+            				<!-- Course table END -->
+            			</div>
+                    </div>
+            		<!-- Card END -->
+	    
+	    </div>
+	    </div>
+	    <!-- Student review END -->
+    
+	    </div> <!-- Row END -->
+	    </div>
+	    
+    }
+    else
+    {
+	    <Loader loader="true"></Loader>
+    }
+    
+    
+    
+</div>
+
+
+
+
+
+
+
+@code {
+    [Parameter]
+    public  string Id { get; set; }
+	ApplicationUser User { get; set; }
+
+	protected async override Task OnInitializedAsync()
+	{
+		User = await UserService.GetAllUserInfoById(Id);
+		if (User == null)
+		{
+			NavigationManager.NavigateTo("/admin/users");
+		}
+	}
+
+}

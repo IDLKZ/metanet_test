@@ -12,14 +12,14 @@ public class Subscription
     
     public string UserId { get; set; }
     
-    public virtual ApplicationUser User { get; set; }
+    public ApplicationUser User { get; set; }
 
     [Required] public bool Status { get; set; } = false;
     
     public int CourseID { get; set; }
-    public virtual  Course Course { get; set; }
+    public  Course Course { get; set; }
     
     
     public int? TransactionId { get; set; }
-    public virtual Transaction Transaction { get; set; }
+    public Transaction Transaction { get; set; }
 }

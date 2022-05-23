@@ -78,5 +78,11 @@ namespace Metanet.Client.Services
             var result = await http.GetFromJsonAsync<ApplicationUser>($"api/user/getuserbyid/{userId}");
             return result;
         }
+        
+        public async Task<ApplicationUser> GetAllUserInfoById(string userId)
+        {
+            var result = await http.GetFromJsonAsync<ApplicationUser>($"api/user/GetAllUserInfoById/{userId}");
+            return result;
+        }
     }
 }

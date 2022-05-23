@@ -186,6 +186,7 @@ namespace Metanet.Server.Services
                 Blogs = dbContext.Blogs.Count(),
                 Lessons = dbContext.Lessons.Count(),
                 Materials = dbContext.Materials.Count(),
+                Transactions = dbContext.Transactions.Count()
 
             };
             return new ServiceResponse<StatsDTO>

@@ -63,7 +63,7 @@
 										</div>
 										<!-- Title -->
 										<h6 class="mb-0 ms-2">	
-											<NavLink href="" class="stretched-link">@item.UserName</NavLink>
+											<NavLink href="@($"/admin/user-show/{item.Id}")" class="stretched-link">@item.UserName</NavLink>
 										</h6>
 									</div>
 								</td>
@@ -121,6 +121,7 @@
 										Действия
 									  </button>
 									  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+										<NavLink class="dropdown-item" href="@($"/admin/user-show/{item.Id}")">Информация</NavLink>
 										<NavLink class="dropdown-item" href="@($"/admin/user-update/{item.Id}")">Изменить</NavLink>
 										
 										<button class="dropdown-item text-danger" @onclick="@(()=>Delete(@item.Id,@item.ImageUrl))">Удалить</button>

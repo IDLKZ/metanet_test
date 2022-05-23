@@ -45,7 +45,7 @@
 										
 										@if (item.User != null)
 										{
-											<NavLink href="@($"/admin/user-update/{item.User.Id}")">
+											<NavLink href="@($"/admin/user-show/{item.User.Id}")">
 												@item.User.Name (@item.User.Email)
 											</NavLink>
 										}

@@ -25,14 +25,17 @@
 								<div class="row g-4">
 									<!-- Course title -->
 									<div class="col-12">
-										<p>@SubscriptionUpdateDto.User.Name</p>
+										<p>Пользователь:@subscription.User.Name</p>
+										<InputText hidden="hidden" @bind-Value="@SubscriptionUpdateDto.UserId"></InputText>
 									</div>
 									<div class="col-12">
-										<p>@SubscriptionUpdateDto.Course.Title</p>
+										<p>Курс:@subscription.Course.Title</p>
+										<InputNumber hidden="hidden" @bind-Value="@SubscriptionUpdateDto.CourseID"></InputNumber>
 									</div>
 									<div class="col-12">
-                                          <p>@SubscriptionUpdateDto.Transaction.ORDER</p>
-                                    </div>
+										<p>Транзакция:@subscription.Transaction.ORDER</p>
+										<InputNumber hidden="hidden" @bind-Value="@SubscriptionUpdateDto.TransactionId"></InputNumber>
+									</div>
 									<div class="col-12">
 										Одобрен
 										<InputCheckbox @bind-Value=@SubscriptionUpdateDto.Status></InputCheckbox>
@@ -63,16 +66,23 @@ else{
     public int Id { get; set; }
 
     SubscriptionUpdateDTO SubscriptionUpdateDto;
+    Subscription subscription;
     
     
     
     protected override async Task OnInitializedAsync()
     {
-	    SubscriptionUpdateDto = await SubscriptionService.GetById(Id);
-        if (SubscriptionUpdateDto == null)
+	    var data = await SubscriptionService.GetById(Id);
+        if (data == null)
         {
             NavigationManager.NavigateTo("/admin/subscriptions");
         }
+        else
+        {
+	        subscription = data.Item1;
+	        SubscriptionUpdateDto = data.Item2;
+        }
+	    
 
     }
 

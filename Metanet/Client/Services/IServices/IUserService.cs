@@ -14,5 +14,6 @@ namespace Metanet.Client.Services.IServices
         public Task<bool> Update(string Id,UserUpdateDTO userUpdate);
         public Task<IEnumerable<UserDTO>> Search(string Search);
         public Task<ApplicationUser> GetUserById(string userId);
+        public Task<ApplicationUser> GetAllUserInfoById(string userId);
    }
 }

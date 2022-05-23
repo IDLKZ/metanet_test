@@ -61,9 +61,9 @@ public class SubscriptionService : ISubscriptionService
         return result.Data;
     }
 
-    public async Task<SubscriptionUpdateDTO> GetById(int Id)
+    public async Task<Tuple<Subscription,SubscriptionUpdateDTO>> GetById(int Id)
     {
-        var result = await _client.GetFromJsonAsync<ServiceResponse<SubscriptionUpdateDTO>>($"api/Subscription/GetById/{Id}");
+        var result = await _client.GetFromJsonAsync<ServiceResponse<Tuple<Subscription,SubscriptionUpdateDTO>>>($"api/Subscription/GetById/{Id}");
         if (!result.Success)
         {
             Toaster.Warning(result.Message ?? "Упс... Что-то пошло не так");

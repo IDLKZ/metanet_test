@@ -302,5 +302,19 @@ namespace Metanet.Server.Services
             var user = await applicationDb.Users.FindAsync(userId);
             return user;
         }
+        
+        
+        public async Task<ApplicationUser> GetAllUserInfoById(string userId)
+        {
+            var user = await applicationDb.Users
+                .AsNoTracking()   
+                .Include(u=>u.UserRoles).ThenInclude(ur=>ur.Role).AsNoTracking()
+                .Include(u=>u.Subscriptions).AsNoTracking()
+                .Include(u=>u.Transactions).ThenInclude(t => t.Course).AsNoTracking()
+                .Include(u=>u.Subscriptions).ThenInclude(t=>t.Transaction).AsNoTracking()
+                .Include(u=>u.Subscriptions).ThenInclude(t=>t.Course).AsNoTracking()
+                .FirstOrDefaultAsync(u => u.Id == userId);
+            return user;
+        }
     }
 }

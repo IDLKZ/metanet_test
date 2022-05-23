@@ -22,5 +22,6 @@ namespace Metanet.Server.Services
         public Task<ServiceResponse<IEnumerable<UserDTO>>> Search(string Search);
 
         public Task<ApplicationUser> GetUserById(string userId);
+        public Task<ApplicationUser> GetAllUserInfoById(string userId);
     }
 }
