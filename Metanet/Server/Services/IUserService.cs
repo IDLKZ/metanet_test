@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Metanet.Server.Database;
 using Metanet.Shared.DTO;
+using Metanet.Shared.Models;
 using Metanet.Shared.ResponsesDTO;
 
 namespace Metanet.Server.Services
@@ -20,6 +21,6 @@ namespace Metanet.Server.Services
 
         public Task<ServiceResponse<IEnumerable<UserDTO>>> Search(string Search);
 
-
+        public Task<ApplicationUser> GetUserById(string userId);
     }
 }

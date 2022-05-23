@@ -11,4 +11,5 @@ public interface ISubscriptionService
     public Task<ServiceResponse<bool>> Update(int Id,SubscriptionUpdateDTO subscriptionUpdateDto);
     public Task<ServiceResponse<SubscriptionUpdateDTO>> GetById(int Id);
     public Task<ServiceResponse<PaginationDTO<Subscription>>> GetAllSubscriptions(int page, int show = 5, string? search = "");
+    public Task<ServiceResponse<Subscription>> GetByUserId(string userId);
 }

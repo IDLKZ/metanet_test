@@ -70,4 +70,10 @@ public class SubscriptionService : ISubscriptionService
         }
         return result.Data;
     }
+    
+    public async Task<Subscription> GetSubscriptionByUserId(string userId)
+    {
+        var response = await _client.GetFromJsonAsync<ServiceResponse<Subscription>>($"api/Subscription/GetSubscriptionByUserId/{userId}");
+        return response.Data;
+    }
 }

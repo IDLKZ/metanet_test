@@ -4,6 +4,7 @@ using Metanet.Server.Database;
 using Metanet.Shared.DTO;
 using Metanet.Shared.Models;
 using Metanet.Shared.ResponsesDTO;
+using Microsoft.EntityFrameworkCore;
 using EF = Microsoft.EntityFrameworkCore.EF;
 using Microsoft.EntityFrameworkCore;
 
@@ -114,6 +115,21 @@ public class SubscriptionService : ISubscriptionService
         var content = mapper.Map <PaginationDTO<Subscription>> (subscription);
         
         var result = new ServiceResponse<PaginationDTO<Subscription>>
+        {
+            Success = true,
+            StatusCode = StatusCodes.Status200OK,
+            Data = content
+        };
+        return result;
+    }
+
+    public async Task<ServiceResponse<Subscription>> GetByUserId(string userId)
+    {
+        var content = await dbContext.Subscriptions
+            .Where(u => u.UserId == userId)
+            .Include(c => c.Course)
+            .FirstOrDefaultAsync();
+        var result = new ServiceResponse<Subscription>
         {
             Success = true,
             StatusCode = StatusCodes.Status200OK,

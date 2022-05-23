@@ -44,6 +44,12 @@ public class SubscriptionController : ControllerBase
     {
         var result = await subscriptionService.GetAllSubscriptions(page, show, search);
         return Ok(result);
+    }
 
+    [HttpGet("{userId}")]
+    public async Task<ActionResult<ServiceResponse<Subscription>>> GetSubscriptionByUserId(string userId)
+    {
+        var result = await subscriptionService.GetByUserId(userId);
+        return Ok(result);
     }
 }

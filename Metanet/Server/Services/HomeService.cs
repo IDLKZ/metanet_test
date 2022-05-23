@@ -195,5 +195,15 @@ namespace Metanet.Server.Services
                 Data = stats
             };
         }
+
+        public async Task<bool> CheckPay(string userId)
+        {
+            var result = await dbContext.Subscriptions
+                .Where(u => u.UserId == userId)
+                .Where(s => s.Status)
+                .FirstOrDefaultAsync();
+            if (result == null) return false;
+            return true;
+        }
     }
 }

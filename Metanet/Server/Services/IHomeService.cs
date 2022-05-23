@@ -27,7 +27,7 @@ namespace Metanet.Server.Services
         public Task<ServiceResponse<Lesson>> GetLessonByAlias(string Alias);
         public Task<ServiceResponse<StatsDTO>> GetStats();
 
-
+        public Task<bool> CheckPay(string userId);
 
 
     }

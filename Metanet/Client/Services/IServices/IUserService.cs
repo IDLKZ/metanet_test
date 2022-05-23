@@ -1,4 +1,5 @@
 ﻿using Metanet.Shared.DTO;
+using Metanet.Shared.Models;
 using Metanet.Shared.ResponsesDTO;
 
 namespace Metanet.Client.Services.IServices
@@ -12,6 +13,6 @@ namespace Metanet.Client.Services.IServices
         public Task<UserUpdateDTO> GetForUpdate(string Id);
         public Task<bool> Update(string Id,UserUpdateDTO userUpdate);
         public Task<IEnumerable<UserDTO>> Search(string Search);
-
-    }
+        public Task<ApplicationUser> GetUserById(string userId);
+   }
 }
