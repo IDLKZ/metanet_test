@@ -4,6 +4,7 @@ using Metanet.Shared.ResponsesDTO;
 using System.Text.Json.Serialization;
 using System.Net.Http.Json;
 using System.Text.Json;
+using Metanet.Shared.Models;
 using Sotsera.Blazor.Toaster;
 
 namespace Metanet.Client.Services
@@ -70,6 +71,12 @@ namespace Metanet.Client.Services
             if (result.Success == true) { Toaster.Success(result.Message ?? "Успешно обновлено"); }
             else { Toaster.Error(result.Message ?? "Что-то пошло не так"); }
             return result.Data;
+        }
+
+        public async Task<ApplicationUser> GetUserById(string userId)
+        {
+            var result = await http.GetFromJsonAsync<ApplicationUser>($"api/user/getuserbyid/{userId}");
+            return result;
         }
     }
 }

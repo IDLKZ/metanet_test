@@ -99,5 +99,12 @@ namespace Metanet.Client.Services
             return result.Data;
             
         }
+
+        public async Task<bool> CheckPay()
+        {
+            var result = await httpClient.GetFromJsonAsync<bool>("api/home/checkpay");
+            
+            return result;
+        }
     }
 }

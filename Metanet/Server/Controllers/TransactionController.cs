@@ -1,11 +1,14 @@
 using System.Security.Claims;
 using Metanet.Server.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Metanet.Server.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
+
 public class TransactionController : ControllerBase
 {
     private readonly ITransactionService _transactionService;

@@ -2,6 +2,7 @@
 @using System.Security.Claims
 @inherits LayoutComponentBase
 @inject NavigationManager Navigation
+@inject IUserService userService
 @attribute [Authorize(Roles = "Customer")]
 <ToastContainer />
 
@@ -32,13 +33,13 @@ Page Banner START -->
 						<!-- Avatar -->
 						<div class="col-auto mt-4 mt-md-0">
 							<div class="avatar avatar-xxl mt-n3">
-								<img class="avatar-img rounded-circle border border-white border-3 shadow" src="assets/images/avatar/01.jpg" alt="">
+								<img class="avatar-img rounded-circle border border-white border-3 shadow" src="@user.ImageUrl" alt="">
 							</div>
 						</div>
 						<!-- Profile info -->
 						<div class="col d-md-flex justify-content-between align-items-center mt-4">
 							<div>
-								<h1 class="my-1 fs-4">@context.User.Identity.Name <i class="bi bi-patch-check-fill text-info small"></i></h1>
+								<h1 class="my-1 fs-4">@user.Name <i class="bi bi-patch-check-fill text-info small"></i></h1>
 							</div>
 							
 						</div>
@@ -103,13 +104,14 @@ Page content END -->
 	[CascadingParameter]
 	private Task<AuthenticationState> AuthenticationStateTask { get; set; }
 	string userId;
+	ApplicationUser user = new ApplicationUser();
 	bool activeWrapper = false;
 
 	protected override async Task OnInitializedAsync()
 	{
 		var authenticationState = await AuthenticationStateTask;
-		userId = authenticationState.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-		Console.WriteLine(userId);
+		userId = authenticationState.User.FindFirstValue(ClaimTypes.NameIdentifier);
+		user = await userService.GetUserById(userId);
 		if (authenticationState?.User?.Identity is null || !authenticationState.User.Identity.IsAuthenticated)
 		{
 			Navigation.NavigateTo("/login", true);

@@ -1,6 +1,9 @@
 ﻿@page "/blogs/{Alias}"
 @inject NavigationManager navigationManager
 @inject IHomeService HomeService
+@inject AuthenticationStateProvider authenticationStateProvider
+@inject IJSRuntime jsRuntime
+@inject IToaster toaster
 @if(ready == true && Blogs != null)
 {
     <section class="default-bg min-vh-100 pt-120">
@@ -173,9 +176,30 @@ else{
         }
     }
 
-    void Navigate(string Alias)
+    async Task Navigate(string Alias)
     {
-        navigationManager.NavigateTo($"/lesson/{Alias}");
+        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            if (await HomeService.CheckPay())
+            {
+                navigationManager.NavigateTo($"/lesson/{Alias}");
+            }
+            else
+            {
+                toaster.Warning("Упс! Кажется вы еще не купили курс!");
+                navigationManager.NavigateTo($"/pay/{Blogs.Course.Alias}");
+            }
+        }
+        else
+        {
+            toaster.Warning("Вы не авторизованы!");
+            navigationManager.NavigateTo("/login");
+        }
+        
+        
     }
 
 

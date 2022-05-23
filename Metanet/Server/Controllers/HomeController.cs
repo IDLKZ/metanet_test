@@ -125,15 +125,21 @@ namespace Metanet.Server.Controllers
         [HttpGet]
         public async Task<ActionResult<ServiceResponse<StatsDTO>>> GetAllStats()
         {
-
             var result = await homeService.GetStats();
             return Ok(result);
-
         }
 
-        
+        [HttpGet]
+        public async Task<ActionResult<bool>> CheckPay()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var response = homeService.CheckPay(userId);
+            return Ok(response.Result);
+        }
 
-        
+
+
+
 
 }
 }

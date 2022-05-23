@@ -296,5 +296,11 @@ namespace Metanet.Server.Services
                 Data = usersDTO
             };
         }
+
+        public async Task<ApplicationUser> GetUserById(string userId)
+        {
+            var user = await applicationDb.Users.FindAsync(userId);
+            return user;
+        }
     }
 }

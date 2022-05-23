@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections;
 using System.Security.Claims;
 using System.Security.Principal;
+using Metanet.Shared.Models;
 
 namespace Metanet.Server.Controllers
 {
@@ -60,6 +61,13 @@ namespace Metanet.Server.Controllers
         public async Task<ActionResult<ServiceResponse<IEnumerable<UserDTO>>>> Search(string Search)
         {
             var result = await UserService.Search(Search);
+            return Ok(result);
+        }
+
+        [HttpGet("{userId}")]
+        public async Task<ActionResult<ApplicationUser>> GetUserById(string userId)
+        {
+            var result = await UserService.GetUserById(userId);
             return Ok(result);
         }
 

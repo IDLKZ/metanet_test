@@ -27,5 +27,7 @@ namespace Metanet.Client.Services.IServices
         public Task<CurrencyDTO> GetCurrency();
 
         public Task<StatsDTO> GetStats();
+
+        public Task<bool> CheckPay();
     }
 }
