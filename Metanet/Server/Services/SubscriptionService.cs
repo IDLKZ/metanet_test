@@ -128,6 +128,8 @@ public class SubscriptionService : ISubscriptionService
         var content = await dbContext.Subscriptions
             .Where(u => u.UserId == userId)
             .Include(c => c.Course)
+            .ThenInclude(b => b.Blog)
+            .ThenInclude(l => l.Lessons)
             .FirstOrDefaultAsync();
         var result = new ServiceResponse<Subscription>
         {
