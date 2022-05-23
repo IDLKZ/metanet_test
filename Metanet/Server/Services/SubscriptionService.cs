@@ -130,6 +130,7 @@ public class SubscriptionService : ISubscriptionService
             .Include(c => c.Course)
             .ThenInclude(b => b.Blog)
             .ThenInclude(l => l.Lessons)
+            .ThenInclude(m => m.Materials)
             .FirstOrDefaultAsync();
         var result = new ServiceResponse<Subscription>
         {
