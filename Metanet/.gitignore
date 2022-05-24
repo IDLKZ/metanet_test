@@ -1,6 +1,6 @@
-Client/bin/
-Client/obj/
-Server/bin/
-Server/obj/
-Shared/bin/
-Shared/obj/
+Metanet/Client/bin/
+Metanet/Client/obj/
+Metanet/Server/bin/
+Metanet/Server/obj/
+Metanet/Shared/bin/
+Metanet/Shared/obj/
