@@ -2,6 +2,7 @@
 @page "/admin/local-transaction"
 @inject IPaymentService paymentService
 @inject Blazored.LocalStorage.ISyncLocalStorageService localStorage
+@inject IJSRuntime _jsRuntime
 
 @if(Transactions != null){
 	
@@ -33,7 +34,7 @@
 				<!-- Course table START -->
 				<div class="table-responsive border-0 rounded-3">
 					<!-- Table START -->
-					<table class="table table-dark-gray align-middle p-4 mb-0 table-hover">
+					<table class="table table-dark-gray align-middle p-4 mb-0 table-hover" id="transaction-export">
 						<!-- Table head -->
 						<thead>
 							<tr>
@@ -184,6 +185,7 @@ else
 
 	protected override async Task OnInitializedAsync()
 	{
+		
 		var pageLocal = localStorage.GetItem<int>("pageTransaction");
 		if (pageLocal != null && pageLocal > 0)
 		{
@@ -195,6 +197,11 @@ else
 		}
 		Transactions = await paymentService.GetAllLocalTransactions(page, showPage, Search);
 		StateHasChanged();
+	}
+
+	protected async override Task OnAfterRenderAsync(bool firstRender)
+	{
+		await _jsRuntime.InvokeAsync<object>("TestDataTablesAdd", new []{"#transaction-export"});
 	}
 
 	protected override async Task OnParametersSetAsync()
@@ -221,6 +228,5 @@ else
 		Transactions = await paymentService.GetAllLocalTransactions(page, showPage, Search);
 		StateHasChanged();
 	}
-
 
 }

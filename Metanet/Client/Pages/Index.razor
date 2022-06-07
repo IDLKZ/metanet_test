@@ -8,7 +8,7 @@
     <div class = "row text-center">
         
         <div class="col-md-12 text-center">
-      <h1 class="banner-text">Мы, ключ к твоему будущему!</h1>
+      <h1 class="banner-text">Инвестируй в себя сегодня, чтобы быть на шаг впереди завтра</h1>
 
       <p class="banner-subtext">успей купить со скидкой:</p>
       
@@ -41,7 +41,7 @@
     </div>
     <div class = "row my-2">
          <div class = "col-md-6 d-flex justify-content-center justify-content-md-end">
-            <img src="materials/images/mission.png" width="320px" />    
+            <img src="materials/images/mission.png" width="320px" class="img-fluid"/>    
          </div>
          <div class = "col-md-5 text-white lh-2 my-2 text-justify"> 
                 Мы живем во время необычайно быстрого прогресса. Мир меняется каждый день, мы просто не можем не принимать участие в этом и хотим делится этими знаниями с вами. Мы уверены что среди вас будут достойные ребята, которые через некоторое время будут делать вещи лучше нас, быстрее нас. И которые передадут знания еще дальше. Возможно именно ты получив старт от нас, сделаешь прорыв века в Криптомире.Кто владеет информацией тот владеет миром
@@ -349,13 +349,6 @@
 
     protected async override Task OnAfterRenderAsync(bool firstRender)
         {
-        await JS.InvokeVoidAsync("initSwiper", null);
-     
+            await JS.InvokeVoidAsync("initSwiper", null);
         }
-
-    
-
-    
-
-
 }
