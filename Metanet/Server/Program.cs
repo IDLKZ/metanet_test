@@ -152,7 +152,7 @@ app.UseStaticFiles(new StaticFileOptions
 });
 
 //End Swagger
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
