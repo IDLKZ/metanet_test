@@ -4,7 +4,7 @@
 
 <section class="default-bg pt-120">
 <section>
-    <div class = "container-fluid banner" style="background-image:linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8)), url('materials/images/bg.gif')">
+    <div class = "container-fluid banner" style="background-image:linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url('materials/images/bg.gif')">
     <div class = "row text-center">
         
         <div class="col-md-12 text-center">
@@ -18,15 +18,25 @@
     }
 
       <div class="d-md-flex justify-content-center">
-        <a class="btn button-blue mx-md-2">
-            купить курс
-        </a>
-        <a class="btn transparent-button-blue  mx-md-2">
-           Ознакомиться
-        </a>
-        <a class="btn transparent-button-blue  mx-md-2">
-           Купить курс для Росии
-        </a>
+          
+          @if (Course != null)
+          {
+              
+              <NavLink class="btn transparent-button-blue  mx-md-2" href="@($"/courses/{Course.Alias}")">
+                  Ознакомиться
+              </NavLink>
+              <NavLink class="btn button-blue mx-md-2"
+                       href="@($"/pay/{Course.Alias}")"
+              >
+                  купить курс
+              </NavLink>
+
+              <NavLink class="btn transparent-button-blue  mx-md-2"
+                 href="@($"/pay/{Course.Alias}")">
+                  Купить курс для Роcсии
+              </NavLink>
+          }
+          
       </div>
       </div>
     </div>
@@ -203,9 +213,13 @@
     </div>
     <div class="row mb-4">
         <div class="col-md-12 text-center">
-            <a class="btn button-blue mx-md-2 mt-4">
-            купить
-        </a>
+            @if (Course != null)
+            {
+                <NavLink class="btn button-blue mx-md-2 mt-4" href="@($"/pay/{Course.Alias}")">
+                    купить
+                </NavLink>
+            }
+            
         </div>
      
 
@@ -230,9 +244,7 @@
     {
            <Countdown DateString="@CourseDate"></Countdown>
     }
-         <a class="btn button-blue mx-md-2 mt-4">
-            купить со скидкой
-        </a>
+         
      </span>
      
  </div>
