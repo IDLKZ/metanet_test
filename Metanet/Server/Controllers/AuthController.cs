@@ -143,6 +143,20 @@ namespace Metanet.Server.Controllers
                     ErrorMessages = roleResult.Errors.Select(e => e.Description)
                 });
             }
+
+            try
+            {
+                var mail = new Shared.DTO.MailRequest();
+                mail.Subject = "Создание аккаунта на сайте metanet.education";
+                mail.Body =
+                    $"<a href='https://metanet.education/'>Аккаунт с никнеймом - {registerDTO.UserName} и почтой - {registerDTO.Email} успешно создан на сайте metanet.education, если это не вы обратитесь в службу поддержки </a>";
+                mail.Emails = new List<string> {registerDTO.Email.ToString()};
+                await mailService.SendEmailAsync(mail);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
             return Ok(new CommonResponse{
                 StatusCode = StatusCodes.Status201Created,
                 Success = true,
