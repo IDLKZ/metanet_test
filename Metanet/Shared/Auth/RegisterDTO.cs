@@ -20,7 +20,7 @@ namespace Metanet.Shared.Auth
         public string Email { get; set; }
 
         [Required(ErrorMessage = "Поле номер телефона обязателен для заполнения")]
-        [RegularExpression(@"^\+?77(\d{9})$", ErrorMessage = "Пожалуйста, введите корректный номер телефона")]
+        //[RegularExpression(@"^\+?77(\d{9})$", ErrorMessage = "Пожалуйста, введите корректный номер телефона")]
         public string PhoneNo { get; set; }
 
 
